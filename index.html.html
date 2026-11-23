@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TizenFit TV — Zero-Impact Core, Walk & Recomposition Coach</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* 10-foot Samsung Tizen TV typography & high-contrast dark OLED slate base */
+    html {
+      font-size: 16px;
+    }
+    @media (min-width: 1280px) {
+      html {
+        font-size: 18px;
+      }
+    }
+
+    body {
+      background-color: #070b14;
+      color: #f8fafc;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* High-visibility glowing focus ring for Samsung TV D-Pad navigation */
+    .tv-focusable {
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1),
+                  box-shadow 0.16s ease,
+                  border-color 0.16s ease,
+                  background-color 0.16s ease;
+      outline: none;
+    }
+
+    .tv-focusable:focus,
+    .tv-focusable.tv-focused {
+      transform: scale(1.025);
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.65), 0 14px 32px -6px rgba(0, 0, 0, 0.85);
+      z-index: 30;
+    }
+
+    /* Active hold glow for Stomach Vacuums & Planks */
+    @keyframes activeHoldGlow {
+      0%, 100% {
+        box-shadow: inset 0 0 24px rgba(16, 185, 129, 0.14), 0 0 0 1px rgba(16, 185, 129, 0.45);
+      }
+      50% {
+        box-shadow: inset 0 0 42px rgba(16, 185, 129, 0.32), 0 0 0 2px rgba(16, 185, 129, 0.85);
+      }
+    }
+    .interval-active-glow {
+      animation: activeHoldGlow 2.4s infinite ease-in-out;
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070b14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#070b14] text-slate-100 antialiased selection:bg-sky-500 selection:text-slate-950">
+
+  <!-- Non-blocking Toast Banner (Replaces alert) -->
+  <div id="toastBanner" role="status" aria-live="polite" class="pointer-events-none fixed bottom-5 right-5 z-50 hidden max-w-md items-center gap-3 rounded-2xl border border-sky-400/75 bg-[#0f172a]/95 px-4 py-3.5 shadow-2xl backdrop-blur-md">
+    <span id="toastIcon" class="text-2xl">✅</span>
+    <div>
+      <p id="toastTitle" class="text-sm font-black text-white">Updated</p>
+      <p id="toastMsg" class="text-xs text-slate-300">Saved locally.</p>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-[1640px] px-4 py-4 sm:px-6 lg:px-8">
+
+    <!-- =====================================================================
+         1. TOP BODY RECOMPOSITION KPI DASHBOARD
+         ===================================================================== -->
+    <header class="mb-5 rounded-3xl border border-slate-800 bg-[#0f172a] p-5 shadow-2xl lg:p-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3.5">
+          <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-sky-400/40 bg-sky-500/15 text-2xl shadow-inner">
+            🏋️
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-xl font-black tracking-tight text-white sm:text-2xl">
+                TizenFit <span class="text-sky-400">TV</span>
+              </h1>
+              <span class="rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-300">
+                Target: 31 Dec 2026
+              </span>
+              <span id="syncStatusPill" class="rounded-full border border-slate-700 bg-slate-900 px-2.5 py-0.5 text-[11px] font-bold text-slate-300">
+                💾 Local Storage Ready
+              </span>
+            </div>
+            <p class="mt-0.5 text-xs text-slate-400 sm:text-sm">
+              Zero-Impact Core Sculpting, Indoor Walking &amp; Recomposition Dashboard (Samsung TV + Galaxy S25)
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button id="btnOpenMeasureModal" type="button" class="tv-focusable rounded-2xl border-2 border-emerald-400 bg-emerald-500 px-4 py-2.5 text-xs font-black text-slate-950 shadow-lg hover:bg-emerald-400 sm:text-sm">
+            📏 Log Weight &amp; Inches
+          </button>
+          <button id="btnOpenSyncModal" type="button" class="tv-focusable rounded-2xl border-2 border-sky-400/80 bg-slate-900 px-4 py-2.5 text-xs font-extrabold text-sky-300 hover:bg-slate-800 sm:text-sm">
+            ☁️ Sync &amp; Backup
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 Recomposition KPI Cards -->
+      <div class="mt-5 grid grid-cols-1 gap-3.5 sm:grid-cols-2 xl:grid-cols-4">
+        <!-- KPI 1: Weight -->
+        <div class="rounded-2xl border border-slate-800 bg-[#080d19] p-4">
+          <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+            <span>Weight (Scale / Fat Base)</span>
+            <span id="kpiWeightRem" class="rounded-md bg-emerald-500/15 px-2 py-0.5 text-emerald-300">1.57 kg fat left</span>
+          </div>
+          <div class="mt-2 flex items-baseline justify-between gap-2">
+            <p class="text-2xl font-black text-white">
+              <span id="kpiWeightCurrent">70.00</span> <span class="text-xs font-semibold text-slate-400">kg scale</span>
+            </p>
+            <p class="text-right text-xs font-semibold text-slate-400">
+              Fat Base: <strong id="kpiFatBaseline" class="text-emerald-300">68.57 kg</strong><br />
+              Start 77.0 → <span class="font-bold text-emerald-400">67.0 kg</span>
+            </p>
+          </div>
+          <div class="mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-slate-800">
+            <div id="kpiWeightBar" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-300 transition-all duration-500" style="width: 84%;"></div>
+          </div>
+        </div>
+
+        <!-- KPI 2: Tummy at Navel -->
+        <div class="rounded-2xl border border-slate-800 bg-[#080d19] p-4">
+          <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+            <span>Tummy (At Navel)</span>
+            <span id="kpiTummyRem" class="rounded-md bg-sky-500/15 px-2 py-0.5 text-sky-300">2.5" to go</span>
+          </div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <p class="text-2xl font-black text-white">
+              <span id="kpiTummyCurrent">38.0</span> <span class="text-sm font-semibold text-slate-400">in</span>
+            </p>
+            <p class="text-xs font-semibold text-slate-400">
+              Start 41.5" → <span class="font-bold text-sky-400">35.5"</span>
+            </p>
+          </div>
+          <div class="mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-slate-800">
+            <div id="kpiTummyBar" class="h-full rounded-full bg-gradient-to-r from-sky-500 to-cyan-300 transition-all duration-500" style="width: 58%;"></div>
+          </div>
+        </div>
+
+        <!-- KPI 3: Waist -->
+        <div class="rounded-2xl border border-slate-800 bg-[#080d19] p-4">
+          <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+            <span>Upper Waist</span>
+            <span id="kpiWaistRem" class="rounded-md bg-indigo-500/15 px-2 py-0.5 text-indigo-300">2.0" to go</span>
+          </div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <p class="text-2xl font-black text-white">
+              <span id="kpiWaistCurrent">35.0</span> <span class="text-sm font-semibold text-slate-400">in</span>
+            </p>
+            <p class="text-xs font-semibold text-slate-400">
+              Start 37.5" → <span class="font-bold text-indigo-400">33.0"</span>
+            </p>
+          </div>
+          <div class="mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-slate-800">
+            <div id="kpiWaistBar" class="h-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-400 transition-all duration-500" style="width: 56%;"></div>
+          </div>
+        </div>
+
+        <!-- KPI 4: Chest & Workout Streak -->
+        <div class="rounded-2xl border border-slate-800 bg-[#080d19] p-4">
+          <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+            <span>Chest &amp; Sessions</span>
+            <span class="rounded-md bg-amber-500/15 px-2 py-0.5 text-amber-300">Muscle Preserved</span>
+          </div>
+          <div class="mt-2 flex items-baseline justify-between">
+            <p class="text-2xl font-black text-white">
+              36.0 <span class="text-sm font-semibold text-slate-400">in Chest</span>
+            </p>
+            <p class="text-xs font-bold text-emerald-400">
+              <span id="kpiTotalWorkouts">0</span> Sessions Done
+            </p>
+          </div>
+          <div class="mt-2.5 flex items-center justify-between text-xs text-slate-400">
+            <span>Active Plan: <strong id="kpiActiveWeekLabel" class="text-white">Week 1</strong></span>
+            <span>Daily Deficit: <strong class="text-emerald-300">~64,898 kcal total</strong></span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Samsung TV D-Pad Navigation Guide Bar -->
+    <div class="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800/80 bg-[#0f172a]/80 px-4 py-2 text-xs text-slate-300">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="rounded bg-slate-800 px-2 py-0.5 font-mono font-bold text-sky-400">▲ ▼ ◀ ▶</span>
+        <span>Samsung TV D-Pad / Arrows to move</span>
+        <span class="text-slate-600">•</span>
+        <span class="rounded bg-slate-800 px-2 py-0.5 font-mono font-bold text-emerald-400">ENTER</span>
+        <span>to select</span>
+        <span class="text-slate-600">•</span>
+        <span class="rounded bg-slate-800 px-2 py-0.5 font-mono font-bold text-amber-300">RETURN / ESC</span>
+        <span>to close popup</span>
+      </div>
+      <span class="font-semibold text-amber-300">🛡️ Low-Impact • Knee-Safe &amp; Reflux-Safe Protocol</span>
+    </div>
+
+    <!-- =====================================================================
+         2. MAIN 12-COLUMN WORKSPACE
+         Left (6 cols): 15-Min Core & Low-Impact Walk Circuit + Live SVG Coach
+         Right (6 cols): Weekly Low-Impact YouTube Progression & Check-In
+         ===================================================================== -->
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+
+      <!-- LEFT COLUMN: 15-MINUTE CIRCUIT TIMER + SIMULTANEOUS LIVE VISUAL FORM COACH -->
+      <section aria-label="15-Minute Core and Low-Impact Walk Circuit Timer" class="flex flex-col gap-5 xl:col-span-6">
+        <div class="rounded-3xl border border-slate-800 bg-[#0f172a] p-5 shadow-2xl sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="rounded-lg bg-emerald-500/20 px-2.5 py-1 text-xs font-extrabold uppercase tracking-wider text-emerald-300">
+                  23-Interval Guided Circuit
+                </span>
+                <span class="rounded-lg border border-sky-400/40 bg-sky-500/15 px-2.5 py-1 text-xs font-extrabold text-sky-300">
+                  🛡️ Low-Impact / Knee-Safe
+                </span>
+              </div>
+              <h2 class="mt-1.5 text-xl font-black text-white sm:text-2xl">
+                15-Min Core &amp; Indoor Walk
+              </h2>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <button id="btnToggleFormVideo" type="button" class="tv-focusable rounded-xl border border-sky-400/70 bg-sky-500/15 px-3 py-2 text-xs font-extrabold text-sky-300 hover:bg-sky-500/25">
+                🎬 Form Demo Video
+              </button>
+              <button id="btnToggleChimes" type="button" class="tv-focusable rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-extrabold text-emerald-400 hover:bg-slate-800">
+                🔊 Chimes ON
+              </button>
+            </div>
+          </div>
+
+          <!-- LIVE COUNTDOWN + REAL-TIME BIOMECHANICAL SVG FORM COACH -->
+          <div id="circuitDisplayCard" class="mt-4 rounded-2xl border border-slate-700/90 bg-[#070b14] p-4 sm:p-5 transition-all">
+            <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+              <span id="circuitStepLabel">Interval 1 of 23</span>
+              <span id="circuitTotalRemaining">Total Left: 15:00</span>
+            </div>
+
+            <div class="mt-2.5">
+              <span id="circuitPhasePill" class="inline-block rounded-full bg-sky-500/20 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-sky-300">
+                WARM-UP • MARCH IN PLACE (60S)
+              </span>
+            </div>
+
+            <!-- 12-Col Inner Split: Countdown + 3-Step Visual Cues (7 cols) | Live SVG + Video PiP (5 cols) -->
+            <div class="mt-3.5 grid grid-cols-1 items-center gap-4 lg:grid-cols-12">
+
+              <!-- Timer & Sequential 3-Step Form Checklist -->
+              <div class="flex flex-col justify-between lg:col-span-7">
+                <div class="flex items-baseline justify-between gap-2">
+                  <div id="circuitCountdown" class="font-mono text-5xl font-black tracking-tight text-white sm:text-6xl">
+                    01:00
+                  </div>
+                  <span id="visualFocusBadge" class="rounded-lg bg-emerald-500/15 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-emerald-300">
+                    Joint Warm-Up
+                  </span>
+                </div>
+
+                <p id="circuitCueText" class="mt-1.5 text-xs font-medium leading-relaxed text-sky-300 sm:text-sm">
+                  March softly ball-to-heel with low knee lift and rhythmic arm swing to warm up ankles and hips without knee impact.
+                </p>
+
+                <!-- Sequential 3-Step Visual Form Checklist -->
+                <div class="mt-3 rounded-xl border border-slate-800 bg-slate-950/90 p-3">
+                  <p class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                    Live Form Checklist
+                  </p>
+                  <ol id="visualStepChecklist" class="mt-2 space-y-1.5 text-xs">
+                    <!-- Populated dynamically -->
+                  </ol>
+                </div>
+              </div>
+
+              <!-- Real-Time JS + SVG Biomechanical Animation Figure + Toggleable YouTube Form Demo -->
+              <div class="flex flex-col gap-2.5 lg:col-span-5">
+                <div class="relative flex flex-col items-center justify-center overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900 to-slate-950 p-3">
+                  <div class="flex w-full items-center justify-between text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+                    <span id="svgFigureTitle">Biomechanical Form</span>
+                    <span id="svgMotionState" class="rounded bg-amber-500/15 px-1.5 py-0.5 text-amber-300">PREVIEW</span>
+                  </div>
+
+                  <!-- Dynamic Animated SVG Canvas (Driven by JS requestAnimationFrame) -->
+                  <div id="liveBiomechSvgContainer" class="my-1 flex h-40 w-full items-center justify-center">
+                    <!-- Populated dynamically -->
+                  </div>
+
+                  <p id="svgTargetMuscleTag" class="rounded-full bg-slate-800/90 px-3 py-0.5 text-[11px] font-bold text-emerald-300">
+                    Target: Hip Mobility &amp; Circulation
+                  </p>
+                </div>
+
+                <!-- Simultaneous Toggleable YouTube Form Reference PiP -->
+                <div id="simultaneousFormVideoBox" class="hidden overflow-hidden rounded-2xl border border-sky-400/50 bg-black shadow-lg">
+                  <div class="flex items-center justify-between bg-slate-900 px-2.5 py-1.5 text-[10px] font-extrabold text-sky-300">
+                    <span id="formVideoLabel">Live Form Demo (Muted)</span>
+                    <a id="formVideoExternalLink" href="https://www.youtube.com/watch?v=95846CBGU0M" target="_blank" rel="noopener noreferrer" class="tv-focusable rounded bg-red-600 px-2 py-0.5 text-white hover:bg-red-500">
+                      Open Video ↗
+                    </a>
+                  </div>
+                  <div class="aspect-video w-full">
+                    <iframe
+                      id="formDemoIframe"
+                      class="h-full w-full"
+                      src=""
+                      title="Simultaneous Exercise Form Reference"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowfullscreen
+                    ></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Overall Circuit Progress Bar -->
+            <div class="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-800">
+              <div id="circuitProgressBar" class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-sky-400 to-indigo-400 transition-all duration-300" style="width: 4.3%;"></div>
+            </div>
+
+            <p id="circuitNextPreview" class="mt-2.5 text-xs font-semibold text-slate-400">
+              Up Next: Standing Stomach Vacuum • Deep Inhale Prep 1/4 (00:10)
+            </p>
+          </div>
+
+          <!-- Primary Timer Controls -->
+          <div class="mt-4 grid grid-cols-3 gap-2.5">
+            <button id="btnCircuitStartPause" type="button" class="tv-focusable rounded-2xl border-2 border-sky-400 bg-sky-500 py-3.5 text-sm font-black text-slate-950 shadow-lg hover:bg-sky-400 sm:text-base">
+              ▶ Start
+            </button>
+            <button id="btnCircuitNext" type="button" class="tv-focusable rounded-2xl border-2 border-slate-700 bg-slate-800 py-3.5 text-sm font-extrabold text-sky-300 hover:bg-slate-700 sm:text-base">
+              ⏭ Next Interval
+            </button>
+            <button id="btnCircuitReset" type="button" class="tv-focusable rounded-2xl border-2 border-slate-700 bg-slate-800 py-3.5 text-sm font-extrabold text-slate-200 hover:bg-slate-700 sm:text-base">
+              ↺ Reset
+            </button>
+          </div>
+
+          <!-- Weekly Workout Streak Box -->
+          <div class="mt-5 rounded-2xl border border-slate-800 bg-[#080d19] p-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-300">
+                Week <span id="routineWeekNum">1</span> Streak (Goal: 5 Days)
+              </span>
+              <span id="routineWeekCountText" class="text-xs font-extrabold text-emerald-400">0 / 5 Done</span>
+            </div>
+            <div id="weekStreakPills" class="mt-2.5 grid grid-cols-5 gap-2"></div>
+            <div class="mt-3 flex gap-2.5">
+              <button id="btnCompleteSession" type="button" class="tv-focusable flex-1 rounded-xl border-2 border-emerald-400 bg-emerald-500 py-3 text-sm font-black text-slate-950 hover:bg-emerald-400">
+                ✓ Log Today's Session Done
+              </button>
+              <button id="btnUndoSession" type="button" class="tv-focusable rounded-xl border-2 border-slate-700 bg-slate-800 px-3.5 py-3 text-xs font-bold text-slate-300 hover:bg-slate-700">
+                Undo
+              </button>
+            </div>
+          </div>
+
+          <!-- Expandable All-23-Intervals Overview -->
+          <details class="mt-4 rounded-2xl border border-slate-800 bg-[#080d19]/80 p-3.5">
+            <summary class="tv-focusable cursor-pointer rounded-lg px-2 py-1 text-xs font-extrabold uppercase tracking-wider text-slate-300">
+              📋 View Full 23-Interval Sequence (15:00 Total)
+            </summary>
+            <ol id="intervalListPreview" class="mt-3 max-h-56 space-y-1.5 overflow-y-auto pr-1 text-xs text-slate-300">
+              <!-- Populated by JS -->
+            </ol>
+          </details>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: WEEKLY LOW-IMPACT & CORE YOUTUBE PROGRESSION -->
+      <section aria-label="Weekly YouTube Progression and Check-In" class="flex flex-col gap-5 xl:col-span-6">
+
+        <div class="rounded-3xl border border-slate-800 bg-[#0f172a] p-5 shadow-2xl sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-black text-white sm:text-2xl">📺 Weekly YouTube Progression</h2>
+              <p class="text-xs text-slate-300 sm:text-sm">Zero-impact indoor walking &amp; core tightening routines curated per week</p>
+            </div>
+            <span id="careModeTag" class="rounded-full bg-sky-500/15 px-3 py-1 text-xs font-bold text-sky-300">
+              Pace: Standard Zero-Impact
+            </span>
+          </div>
+
+          <!-- 4 Week Selector Tabs -->
+          <div id="weekTabsGrid" class="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+            <!-- Populated by JS -->
+          </div>
+
+          <!-- Video Track Selector & Direct YouTube Deep Link -->
+          <div class="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-800 bg-[#080d19] p-3">
+            <div id="videoTrackPills" class="flex flex-wrap gap-2">
+              <!-- Populated by JS -->
+            </div>
+            <a id="btnOpenYoutubeDirect" href="https://www.youtube.com/watch?v=cvEJ5WFHJgw" target="_blank" rel="noopener noreferrer" class="tv-focusable inline-flex items-center gap-1.5 rounded-xl border-2 border-red-500/80 bg-red-600 px-3.5 py-2 text-xs font-extrabold text-white hover:bg-red-500">
+              <span>▶</span>
+              <span>Open in YouTube App</span>
+            </a>
+          </div>
+
+          <!-- 16:9 Embedded YouTube Preview -->
+          <div class="relative mt-3.5 aspect-video w-full overflow-hidden rounded-2xl border-2 border-slate-800 bg-black shadow-inner">
+            <iframe
+              id="youtubeIframe"
+              class="h-full w-full"
+              src=""
+              title="TizenFit Weekly Zero-Impact Workout Video"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          </div>
+
+          <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+            <span id="activeVideoDescription" class="font-medium text-slate-300">Week 1 • 15-Min Low-Impact Indoor Walk (No Jumping)</span>
+            <span class="font-mono text-sky-400" id="activeQueryDisplay">Video ID: cvEJ5WFHJgw</span>
+          </div>
+        </div>
+
+        <!-- End-of-Week Adaptive Progression Check-In -->
+        <div class="rounded-3xl border border-slate-800 bg-[#0f172a] p-5 shadow-2xl sm:p-6">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-lg font-black text-white sm:text-xl">🧠 End-of-Week Progression Check-In</h3>
+              <p class="text-xs text-slate-300 sm:text-sm">
+                Select how your week felt to automatically unlock &amp; calibrate next week's routine:
+              </p>
+            </div>
+            <span id="feedbackStatusLabel" class="rounded-xl bg-slate-900 px-3 py-1.5 text-xs font-bold text-emerald-300">
+              Ready for Check-In
+            </span>
+          </div>
+
+          <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <button type="button" data-feedback="too_easy" class="tv-focusable flex flex-col items-start rounded-2xl border-2 border-slate-700 bg-[#080d19] p-4 text-left hover:border-emerald-400">
+              <span class="text-2xl">🚀</span>
+              <span class="mt-1.5 text-base font-extrabold text-emerald-400">Too Easy</span>
+              <span class="mt-1 text-xs text-slate-300">Unlock next week immediately &amp; boost brisk walk pace.</span>
+            </button>
+
+            <button type="button" data-feedback="just_right" class="tv-focusable flex flex-col items-start rounded-2xl border-2 border-slate-700 bg-[#080d19] p-4 text-left hover:border-sky-400">
+              <span class="text-2xl">🎯</span>
+              <span class="mt-1.5 text-base font-extrabold text-sky-400">Just Right</span>
+              <span class="mt-1 text-xs text-slate-300">Advance smoothly on standard zero-impact core &amp; walk plan.</span>
+            </button>
+
+            <button type="button" data-feedback="care_mode" class="tv-focusable flex flex-col items-start rounded-2xl border-2 border-slate-700 bg-[#080d19] p-4 text-left hover:border-amber-400">
+              <span class="text-2xl">🛡️</span>
+              <span class="mt-1.5 text-base font-extrabold text-amber-300">Recovery / Throat Care</span>
+              <span class="mt-1 text-xs text-slate-300">Switch videos to ultra-gentle low-strain &amp; breath routines.</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: TV D-PAD MEASUREMENT STEPPERS (+/-) & DUAL-LINE SVG CHART
+       ========================================================================= -->
+  <div id="measureModal" role="dialog" aria-modal="true" aria-labelledby="measureModalTitle" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
+    <div class="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-slate-700 bg-[#131c31] p-5 shadow-2xl sm:p-7">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 id="measureModalTitle" class="text-xl font-black text-white sm:text-2xl">📏 Log Weight &amp; Inches (D-Pad Steppers)</h3>
+          <p class="mt-0.5 text-xs text-slate-300 sm:text-sm">Use TV remote Left/Right + Enter on − / + buttons (no keyboard needed)</p>
+        </div>
+        <span class="rounded-xl border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-extrabold text-amber-300">
+          Chest: 36.0" Maintained
+        </span>
+      </div>
+
+      <!-- 3 Remote-Friendly Steppers -->
+      <div class="mt-5 grid grid-cols-1 gap-3.5 sm:grid-cols-3">
+        <!-- Weight Stepper -->
+        <div class="rounded-2xl border border-slate-700 bg-[#080d19] p-4 text-center">
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Scale Weight (Goal 67.0 kg)</p>
+          <div class="mt-3 flex items-center justify-between gap-2">
+            <button id="stepWeightMinus" type="button" class="tv-focusable h-12 w-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-2xl font-black text-white hover:bg-slate-700">−</button>
+            <span id="valStepperWeight" class="font-mono text-xl font-black text-emerald-400">70.00 kg</span>
+            <button id="stepWeightPlus" type="button" class="tv-focusable h-12 w-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-2xl font-black text-white hover:bg-slate-700">+</button>
+          </div>
+          <p class="mt-2 text-[11px] text-slate-400">Step: ±0.10 kg</p>
+        </div>
+
+        <!-- Tummy at Navel Stepper -->
+        <div class="rounded-2xl border border-slate-700 bg-[#080d19] p-4 text-center">
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Tummy Navel (Goal 35.5")</p>
+          <div class="mt-3 flex items-center justify-between gap-2">
+            <button id="stepTummyMinus" type="button" class="tv-focusable h-12 w-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-2xl font-black text-white hover:bg-slate-700">−</button>
+            <span id="valStepperTummy" class="font-mono text-xl font-black text-sky-400">38.0"</span>
+            <button id="stepTummyPlus" type="button" class="tv-focusable h-12 w-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-2xl font-black text-white hover:bg-slate-700">+</button>
+          </div>
+          <p class="mt-2 text-[11px] text-slate-400">Step: ±0.25 in</p>
+        </div>
+
+        <!-- Waist Stepper -->
+        <div class="rounded-2xl border border-slate-700 bg-[#080d19] p-4 text-center">
+          <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Upper Waist (Goal 33.0")</p>
+          <div class="mt-3 flex items-center justify-between gap-2">
+            <button id="stepWaistMinus" type="button" class="tv-focusable h-12 w-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-2xl font-black text-white hover:bg-slate-700">−</button>
+            <span id="valStepperWaist" class="font-mono text-xl font-black text-indigo-400">35.0"</span>
+            <button id="stepWaistPlus" type="button" class="tv-focusable h-12 w-12 rounded-xl border-2 border-slate-700 bg-slate-800 text-2xl font-black text-white hover:bg-slate-700">+</button>
+          </div>
+          <p class="mt-2 text-[11px] text-slate-400">Step: ±0.25 in</p>
+        </div>
+      </div>
+
+      <!-- Dual-Line SVG Trajectory Chart -->
+      <div class="mt-5 rounded-2xl border border-slate-800 bg-[#080d19] p-4">
+        <div class="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span class="font-extrabold uppercase tracking-wider text-slate-300">Trajectory: Day 1 → Day 54 → Day 63 → Live</span>
+          <div class="flex items-center gap-4 font-bold">
+            <span class="inline-flex items-center gap-1.5 text-emerald-400">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span> Weight (kg)
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-sky-400">
+              <span class="h-2.5 w-2.5 rounded-full bg-sky-400"></span> Tummy (in)
+            </span>
+          </div>
+        </div>
+        <svg id="dualTrajectorySvg" viewBox="0 0 640 165" class="h-40 w-full overflow-visible"></svg>
+      </div>
+
+      <div class="mt-5 flex flex-wrap gap-3">
+        <button id="btnSaveMeasurements" type="button" class="tv-focusable flex-1 rounded-2xl border-2 border-emerald-400 bg-emerald-500 py-3.5 text-base font-black text-slate-950 hover:bg-emerald-400">
+          ✓ Save &amp; Sync Entry
+        </button>
+        <button id="btnCloseMeasureModal" type="button" class="tv-focusable rounded-2xl border-2 border-slate-700 bg-slate-800 px-6 py-3.5 text-base font-extrabold text-slate-200 hover:bg-slate-700">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: JSON EXPORT / IMPORT BACKUP & FIREBASE REALTIME DB SYNC
+       ========================================================================= -->
+  <div id="syncModal" role="dialog" aria-modal="true" aria-labelledby="syncModalTitle" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 p-4 backdrop-blur-sm">
+    <div class="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-3xl border border-slate-700 bg-[#131c31] p-5 shadow-2xl sm:p-7">
+      <div class="flex items-center justify-between gap-2">
+        <div>
+          <h3 id="syncModalTitle" class="text-xl font-black text-white sm:text-2xl">☁️ Sync &amp; JSON Backup</h3>
+          <p class="mt-0.5 text-xs text-slate-300 sm:text-sm">Keep your Samsung TV Browser and Galaxy S25 progress synchronized</p>
+        </div>
+        <button id="btnCloseSyncModalTop" type="button" class="tv-focusable rounded-xl border border-slate-700 bg-slate-800 px-3.5 py-2 text-xs font-extrabold text-slate-200 hover:bg-slate-700">
+          ✕ Close
+        </button>
+      </div>
+
+      <!-- SECTION 1: JSON EXPORT / IMPORT -->
+      <div class="mt-5 rounded-2xl border border-slate-800 bg-[#080d19] p-4 sm:p-5">
+        <h4 class="text-base font-extrabold text-emerald-400">📦 1. JSON File Export &amp; Import Backup</h4>
+        <p class="mt-1 text-xs text-slate-300">
+          Download a timestamped backup file or paste/upload JSON to restore on any device offline.
+        </p>
+
+        <div class="mt-3.5 flex flex-wrap gap-3">
+          <button id="btnExportJsonFile" type="button" class="tv-focusable rounded-xl border-2 border-emerald-400 bg-emerald-500 px-4 py-2.5 text-xs font-black text-slate-950 hover:bg-emerald-400 sm:text-sm">
+            ⬇️ Download JSON Backup
+          </button>
+
+          <label for="jsonFileInput" tabindex="0" id="lblImportJsonFile" class="tv-focusable cursor-pointer rounded-xl border-2 border-sky-400/80 bg-slate-800 px-4 py-2.5 text-xs font-extrabold text-sky-300 hover:bg-slate-700 sm:text-sm">
+            📂 Import JSON File
+          </label>
+          <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden" />
+
+          <button id="btnCopyJsonClipboard" type="button" class="tv-focusable rounded-xl border-2 border-slate-700 bg-slate-800 px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-slate-700 sm:text-sm">
+            📋 Copy JSON Text
+          </button>
+        </div>
+
+        <div class="mt-3">
+          <label for="jsonPasteArea" class="block text-xs font-bold text-slate-400">Paste JSON Backup Here (for TV Browser):</label>
+          <textarea id="jsonPasteArea" rows="3" placeholder='{"currentWeight": 70.0, ...}' class="tv-focusable mt-1.5 w-full rounded-xl border border-slate-700 bg-slate-950 p-2.5 font-mono text-xs text-sky-300 focus:border-sky-400"></textarea>
+          <button id="btnApplyPastedJson" type="button" class="tv-focusable mt-2 rounded-xl border-2 border-sky-400 bg-sky-500 px-4 py-2 text-xs font-black text-slate-950 hover:bg-sky-400">
+            📥 Import Pasted JSON
+          </button>
+        </div>
+      </div>
+
+      <!-- SECTION 2: OPTIONAL FIREBASE REALTIME DATABASE REST SYNC -->
+      <div class="mt-5 rounded-2xl border border-slate-800 bg-[#080d19] p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <h4 class="text-base font-extrabold text-sky-400">🔥 2. Optional Firebase Realtime Database Sync</h4>
+          <span id="modalCloudBadge" class="rounded-full bg-slate-800 px-3 py-0.5 text-xs font-bold text-slate-300">
+            Disconnected (Local Only)
+          </span>
+        </div>
+        <p class="mt-1 text-xs text-slate-300">
+          Lightweight REST <code class="text-sky-300">fetch()</code> sync (works natively on Samsung Tizen TV). Enter your Realtime DB URL and PIN (<code class="text-emerald-300">vishal-tizenfit</code>) on both TV and phone.
+        </p>
+
+        <div class="mt-3.5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div class="sm:col-span-2">
+            <label for="firebaseUrlInput" class="block text-xs font-bold text-slate-400">Firebase Realtime DB URL</label>
+            <input
+              id="firebaseUrlInput"
+              type="url"
+              placeholder="https://your-project-default-rtdb.firebaseio.com"
+              class="tv-focusable mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 text-xs text-white placeholder-slate-500"
+            />
+          </div>
+          <div>
+            <label for="firebasePinInput" class="block text-xs font-bold text-slate-400">Sync PIN</label>
+            <input
+              id="firebasePinInput"
+              type="text"
+              value="vishal-tizenfit"
+              placeholder="vishal-tizenfit"
+              class="tv-focusable mt-1 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-2.5 font-mono text-xs text-emerald-300"
+            />
+          </div>
+        </div>
+
+        <div class="mt-4 flex flex-wrap gap-2.5">
+          <button id="btnFirebaseConnectPush" type="button" class="tv-focusable rounded-xl border-2 border-emerald-400 bg-emerald-500 px-4 py-2.5 text-xs font-black text-slate-950 hover:bg-emerald-400 sm:text-sm">
+            🚀 Connect &amp; Push Now
+          </button>
+          <button id="btnFirebasePull" type="button" class="tv-focusable rounded-xl border-2 border-sky-400 bg-sky-500 px-4 py-2.5 text-xs font-black text-slate-950 hover:bg-sky-400 sm:text-sm">
+            ⬇️ Pull from Cloud
+          </button>
+          <button id="btnFirebaseDisconnect" type="button" class="tv-focusable rounded-xl border-2 border-rose-500/70 bg-slate-800 px-4 py-2.5 text-xs font-extrabold text-rose-300 hover:bg-slate-700 sm:text-sm">
+            🔌 Disconnect
+          </button>
+        </div>
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <button id="btnCloseSyncModalBottom" type="button" class="tv-focusable rounded-2xl border-2 border-slate-700 bg-slate-800 px-6 py-3 text-sm font-extrabold text-white hover:bg-slate-700">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * TizenFit TV — Self-Contained Application Logic
+     * Optimized for Samsung Tizen TV Browser (1920x1080 D-Pad) & Galaxy S25
+     */
+
+    // =========================================================================
+    // 0. WEB AUDIO API SYNTHESIZED CHIMES & TOAST BANNER
+    // =========================================================================
+    let audioCtx = null;
+
+    function playChime(type = 'work') {
+      if (!state.audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        }
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'tick') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(660, now);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.13);
+        } else if (type === 'inhale') {
+          // Gentle ascending inhale breath tone
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(392.0, now);
+          osc.frequency.linearRampToValueAtTime(523.25, now + 0.35);
+          gain.gain.setValueAtTime(0.13, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+          osc.start(now);
+          osc.stop(now + 0.44);
+        } else if (type === 'hold') {
+          // Crisp double chime for Stomach Vacuum draw-in hold
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(659.25, now);
+          osc.frequency.setValueAtTime(880.0, now + 0.12);
+          gain.gain.setValueAtTime(0.16, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'rest') {
+          // Soft descending rest tone
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(392.0, now + 0.15);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'complete') {
+          // 4-note victory arpeggio
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.14);
+          osc.frequency.setValueAtTime(783.99, now + 0.28);
+          osc.frequency.setValueAtTime(1046.5, now + 0.42);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+          osc.start(now);
+          osc.stop(now + 0.78);
+        } else {
+          // Standard work/transition chime
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.setValueAtTime(880.0, now + 0.14);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.36);
+          osc.start(now);
+          osc.stop(now + 0.38);
+        }
+      } catch (err) {
+        console.warn('Audio chime skipped:', err);
+      }
+    }
+
+    let toastTimeout = null;
+    function showToast(title, msg, icon = '✅') {
+      const banner = document.getElementById('toastBanner');
+      if (!banner) return;
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastTitle').textContent = title;
+      document.getElementById('toastMsg').textContent = msg;
+      banner.classList.remove('hidden');
+      banner.classList.add('flex');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        banner.classList.add('hidden');
+        banner.classList.remove('flex');
+      }, 3600);
+    }
+
+    // =========================================================================
+    // 1. 23-INTERVAL 15-MINUTE CORE & LOW-IMPACT WALK CIRCUIT (900 SECONDS)
+    //    Includes Deep Inhale Prep (10s) -> Vacuum Hold (20s) -> Recovery (15s) x4
+    // =========================================================================
+    const VISUAL_GUIDES = {
+      march: {
+        title: 'Warm-Up March in Place',
+        focusBadge: 'Joint Warm-Up',
+        muscleTag: 'Target: Low-Impact Hip & Ankle Circulation',
+        videoId: 'cvEJ5WFHJgw',
+        videoTitle: 'Low-Impact March & Walk Warm-Up',
+        steps: [
+          'Stand tall with shoulders relaxed and ribs stacked over pelvis.',
+          'Lift knees comfortably to hip-pocket height — zero jumping.',
+          'Land softly ball-to-heel while swinging opposite arms rhythmically.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <line x1="25" y1="152" x2="165" y2="152" stroke="#334155" stroke-width="3" stroke-linecap="round" />
+            <circle cx="96" cy="30" r="13" fill="#38bdf8" />
+            <line x1="96" y1="45" x2="96" y2="104" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" />
+            <ellipse cx="96" cy="84" rx="8" ry="15" fill="#10b981" fill-opacity="0.35" stroke="#10b981" stroke-width="1.5" />
+            <g id="svgArmR"><line x1="96" y1="64" x2="76" y2="92" stroke="#94a3b8" stroke-width="5" stroke-linecap="round" /></g>
+            <g id="svgArmL"><line x1="96" y1="64" x2="116" y2="92" stroke="#38bdf8" stroke-width="5.5" stroke-linecap="round" /></g>
+            <g id="svgLegR"><polyline points="96,104 88,128 86,150" fill="none" stroke="#94a3b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" /></g>
+            <g id="svgLegL"><polyline points="96,104 112,122 108,146" fill="none" stroke="#10b981" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" /></g>
+          </svg>
+        `
+      },
+      vacuum_inhale: {
+        title: 'Deep Inhale & Exhale Prep (10s)',
+        focusBadge: 'Breath Expansion',
+        muscleTag: 'Target: Diaphragm & Ribcage Setup',
+        videoId: '95846CBGU0M',
+        videoTitle: 'Standing Stomach Vacuum Prep',
+        steps: [
+          'Stand tall with hands on hips and chest open.',
+          'Take a deep, slow nasal inhale expanding your ribs.',
+          'In the final 3 seconds, exhale 100% of air out completely.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <circle id="svgInhaleRing" cx="95" cy="94" r="34" fill="#38bdf8" fill-opacity="0.12" stroke="#38bdf8" stroke-width="2.2" />
+            <circle cx="98" cy="26" r="12" fill="#38bdf8" />
+            <path d="M 106 42 L 106 136" stroke="#f8fafc" stroke-width="7" stroke-linecap="round" />
+            <path id="svgInhaleBelly" d="M 96 58 Q 74 92 96 126" fill="none" stroke="#38bdf8" stroke-width="5.5" stroke-linecap="round" />
+            <line x1="102" y1="128" x2="102" y2="156" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" />
+            <text x="95" y="152" text-anchor="middle" fill="#7dd3fc" font-size="9.5" font-weight="800">INHALE → FULL EXHALE</text>
+          </svg>
+        `
+      },
+      vacuum_hold: {
+        title: 'Stomach Vacuum Hold (20s)',
+        focusBadge: 'TVA Corset Pull-In',
+        muscleTag: 'Target: Transverse Abdominis (Waist Cinch)',
+        videoId: '95846CBGU0M',
+        videoTitle: 'Standing Stomach Vacuum Form Tutorial',
+        steps: [
+          'With lungs empty, draw navel deep inward & upward toward spine.',
+          'Keep lower back neutral and ribs down — do not hunch shoulders.',
+          'Hold tight for 20s using tiny shallow upper-chest sips of air.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <circle id="svgVacuumRing" cx="95" cy="94" r="42" fill="none" stroke="#10b981" stroke-width="2.2" stroke-dasharray="5,4" />
+            <circle cx="98" cy="26" r="12" fill="#38bdf8" />
+            <path d="M 106 42 L 106 136" stroke="#f8fafc" stroke-width="7" stroke-linecap="round" />
+            <path d="M 96 58 Q 66 92 96 126" fill="none" stroke="#475569" stroke-width="2" stroke-dasharray="3,3" />
+            <path id="svgVacuumBelly" d="M 96 58 Q 92 92 96 126" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" />
+            <g id="svgVacuumArrows">
+              <polyline points="56,92 84,92 77,85 84,92 77,99" fill="none" stroke="#38bdf8" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <line x1="102" y1="128" x2="102" y2="156" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" />
+            <text x="48" y="78" fill="#6ee7b7" font-size="9.5" font-weight="800">DRAW IN</text>
+          </svg>
+        `
+      },
+      vacuum_rest: {
+        title: 'Recovery Nasal Breath (15s)',
+        focusBadge: 'Diaphragm Reset',
+        muscleTag: 'Target: Controlled Nasal Oxygenation',
+        videoId: '95846CBGU0M',
+        videoTitle: 'Stomach Vacuum Breathing Reset',
+        steps: [
+          'Release the abdominal hold smoothly without slumping.',
+          'Breathe slowly through your nose for 3–4 seconds.',
+          'Reset tall posture for your next inhale prep.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <circle id="svgRestBreathRing" cx="95" cy="94" r="36" fill="#38bdf8" fill-opacity="0.1" stroke="#38bdf8" stroke-width="2.2" />
+            <circle cx="98" cy="26" r="12" fill="#38bdf8" />
+            <path d="M 106 42 L 106 136" stroke="#f8fafc" stroke-width="7" stroke-linecap="round" />
+            <path id="svgRestBelly" d="M 96 58 Q 76 92 96 126" fill="none" stroke="#38bdf8" stroke-width="5.5" stroke-linecap="round" />
+            <line x1="102" y1="128" x2="102" y2="156" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" />
+            <text x="95" y="152" text-anchor="middle" fill="#7dd3fc" font-size="10" font-weight="800">RELAX &amp; BREATHE</text>
+          </svg>
+        `
+      },
+      dead_bug: {
+        title: 'Dead Bugs (Lumbar-Flat Lock)',
+        focusBadge: 'Anti-Extension Core',
+        muscleTag: 'Target: Lower Rectus & Deep TVA',
+        videoId: 'g_BYB0R-4Ws',
+        videoTitle: 'Dead Bug Exercise Proper Form',
+        steps: [
+          'Press lower back flat into the mat — zero gap under lumbar spine.',
+          'Extend opposite arm overhead and heel forward slowly.',
+          'Keep knees unweighted in mid-air — zero joint impact.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <line x1="18" y1="138" x2="172" y2="138" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <circle cx="144" cy="122" r="11" fill="#38bdf8" />
+            <line x1="76" y1="128" x2="132" y2="128" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" />
+            <rect x="86" y="131" width="34" height="5" rx="2.5" fill="#10b981" />
+            <g id="svgDeadBugArmA"><line x1="122" y1="126" x2="122" y2="84" stroke="#38bdf8" stroke-width="5" stroke-linecap="round" /></g>
+            <g id="svgDeadBugArmB"><line x1="118" y1="126" x2="118" y2="86" stroke="#94a3b8" stroke-width="4.5" stroke-linecap="round" /></g>
+            <g id="svgDeadBugLegA"><polyline points="76,128 76,94 46,94" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" /></g>
+            <g id="svgDeadBugLegB"><polyline points="76,128 76,96 48,96" fill="none" stroke="#94a3b8" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" /></g>
+          </svg>
+        `
+      },
+      plank: {
+        title: 'Forearm Plank + Pelvic Tilt',
+        focusBadge: 'Six-Pack Bracing',
+        muscleTag: 'Target: Rectus Abdominis & Pelvic Tilt',
+        videoId: 'pSHjTRCQxIw',
+        videoTitle: 'Forearm Plank Proper Form',
+        steps: [
+          'Stack elbows directly under shoulders on forearms.',
+          'Tuck tailbone under (posterior pelvic tilt) & squeeze glutes.',
+          'Pull elbows toward toes isometrically — drop to knees if needed.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <line x1="16" y1="138" x2="174" y2="138" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <g id="svgPlankGroup">
+              <circle cx="152" cy="84" r="10" fill="#38bdf8" />
+              <polyline points="136,92 136,133 158,133" fill="none" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+              <line x1="34" y1="114" x2="136" y2="92" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" />
+              <ellipse id="svgPlankGlow" cx="88" cy="105" rx="22" ry="7" transform="rotate(-12 88 105)" fill="#10b981" fill-opacity="0.45" stroke="#10b981" stroke-width="2" />
+              <line x1="34" y1="114" x2="30" y2="135" stroke="#cbd5e1" stroke-width="6" stroke-linecap="round" />
+            </g>
+            <text x="95" y="64" text-anchor="middle" fill="#6ee7b7" font-size="9.5" font-weight="800">TUCK PELVIS • BRACE ABS</text>
+          </svg>
+        `
+      },
+      bridge: {
+        title: 'Glute Bridges (Core Brace)',
+        focusBadge: 'Posture & Pelvic Reset',
+        muscleTag: 'Target: Glutes & Lower Core Alignment',
+        videoId: 'OUgsJ8-Vi0E',
+        videoTitle: 'Glute Bridge Proper Form Tutorial',
+        steps: [
+          'Lie flat with knees bent and feet planted hip-width apart.',
+          'Drive through heels to lift hips into a straight shoulder-knee line.',
+          'Brace abs & squeeze glutes at top for 2 seconds — zero knee shear.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <line x1="16" y1="138" x2="174" y2="138" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <circle cx="150" cy="126" r="10" fill="#38bdf8" />
+            <line id="svgBridgeTorso" x1="76" y1="128" x2="138" y2="128" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" />
+            <circle id="svgBridgePelvis" cx="76" cy="128" r="9" fill="#10b981" fill-opacity="0.55" stroke="#10b981" stroke-width="2" />
+            <polyline id="svgBridgeLeg" points="76,128 46,92 38,135" fill="none" stroke="#38bdf8" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" />
+            <text x="95" y="68" text-anchor="middle" fill="#7dd3fc" font-size="9.5" font-weight="800">DRIVE HEELS • BRACE CORE</text>
+          </svg>
+        `
+      },
+      walk: {
+        title: 'Brisk Zero-Impact Walk Finish',
+        focusBadge: 'Fat-Burn Finisher',
+        muscleTag: 'Target: Visceral Belly Fat Oxidation',
+        videoId: 'enYITYwvPAQ',
+        videoTitle: 'Brisk Low-Impact Indoor Walk',
+        steps: [
+          'Keep chest proud and abdominal wall lightly drawn in (20% brace).',
+          'Step briskly heel-to-toe with zero jumping or joint pounding.',
+          'Pump arms strongly to elevate heart rate into the fat-burn zone.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <line x1="20" y1="152" x2="170" y2="152" stroke="#10b981" stroke-opacity="0.5" stroke-width="3" stroke-linecap="round" />
+            <circle cx="96" cy="28" r="13" fill="#10b981" />
+            <line x1="96" y1="43" x2="96" y2="104" stroke="#f8fafc" stroke-width="8" stroke-linecap="round" />
+            <g id="svgWalkArmR"><line x1="96" y1="62" x2="72" y2="88" stroke="#94a3b8" stroke-width="5.5" stroke-linecap="round" /></g>
+            <g id="svgWalkArmL"><line x1="96" y1="62" x2="120" y2="88" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" /></g>
+            <g id="svgWalkLegR"><polyline points="96,104 82,128 76,150" fill="none" stroke="#94a3b8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" /></g>
+            <g id="svgWalkLegL"><polyline points="96,104 114,124 120,150" fill="none" stroke="#10b981" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" /></g>
+          </svg>
+        `
+      },
+      rest: {
+        title: 'Transition & Position Reset',
+        focusBadge: 'Smooth Transition',
+        muscleTag: 'Target: Joint-Safe Setup & Recovery',
+        videoId: '95846CBGU0M',
+        videoTitle: 'Controlled Breathing & Position Reset',
+        steps: [
+          'Move slowly and smoothly into your next starting position.',
+          'Keep knees supported on a soft mat or folded towel if needed.',
+          'Take two slow nasal breaths before the next chime.'
+        ],
+        renderSvg: () => `
+          <svg viewBox="0 0 190 165" class="h-36 w-44">
+            <circle id="svgTransitionRing" cx="95" cy="84" r="40" fill="#f59e0b" fill-opacity="0.1" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4" />
+            <text x="95" y="80" text-anchor="middle" fill="#fcd34d" font-size="13" font-weight="900">TRANSITION</text>
+            <text x="95" y="98" text-anchor="middle" fill="#cbd5e1" font-size="9.5" font-weight="700">Set Position Smoothly</text>
+          </svg>
+        `
+      }
+    };
+
+    // Exact 15:00 (900 seconds) interval breakdown
+    const CIRCUIT_INTERVALS = [
+      { id: 1,  title: 'Warm-Up March in Place',                    phase: 'warmup', guideKey: 'march',         seconds: 60,  cue: 'March softly ball-to-heel with low knee lift and rhythmic arm swing to warm up joints.' },
+      // Set 1 Vacuum
+      { id: 2,  title: 'Stomach Vacuum • Deep Inhale Prep (1/4)',    phase: 'inhale', guideKey: 'vacuum_inhale', seconds: 10,  cue: 'Inhale deeply through your nose, then exhale 100% of air out before the hold chime.' },
+      { id: 3,  title: 'Standing Stomach Vacuum • Hold (1/4)',       phase: 'hold',   guideKey: 'vacuum_hold',   seconds: 20,  cue: 'Pull belly button tight toward spine and hold with tiny shallow chest breaths!' },
+      { id: 4,  title: 'Recovery Breath • Vacuum (1/4)',            phase: 'rest',   guideKey: 'vacuum_rest',   seconds: 15,  cue: 'Release the abdominal wall smoothly, inhale through nose, keep posture tall.' },
+      // Set 2 Vacuum
+      { id: 5,  title: 'Stomach Vacuum • Deep Inhale Prep (2/4)',    phase: 'inhale', guideKey: 'vacuum_inhale', seconds: 10,  cue: 'Deep nasal inhale expanding ribs, then empty lungs completely.' },
+      { id: 6,  title: 'Standing Stomach Vacuum • Hold (2/4)',       phase: 'hold',   guideKey: 'vacuum_hold',   seconds: 20,  cue: 'Draw lower tummy inward & upward under ribcage — engage your internal corset!' },
+      { id: 7,  title: 'Recovery Breath • Vacuum (2/4)',            phase: 'rest',   guideKey: 'vacuum_rest',   seconds: 15,  cue: 'Relax tension, roll shoulders back, prepare for Set 3.' },
+      // Set 3 Vacuum
+      { id: 8,  title: 'Stomach Vacuum • Deep Inhale Prep (3/4)',    phase: 'inhale', guideKey: 'vacuum_inhale', seconds: 10,  cue: 'Tall posture, slow deep breath in, full exhale out.' },
+      { id: 9,  title: 'Standing Stomach Vacuum • Hold (3/4)',       phase: 'hold',   guideKey: 'vacuum_hold',   seconds: 20,  cue: 'Deep navel pull-in hold — keep lower back neutral with zero arching.' },
+      { id: 10, title: 'Recovery Breath • Vacuum (3/4)',            phase: 'rest',   guideKey: 'vacuum_rest',   seconds: 15,  cue: 'Smooth nasal recovery breaths — one final vacuum set remaining.' },
+      // Set 4 Vacuum
+      { id: 11, title: 'Stomach Vacuum • Deep Inhale Prep (4/4)',    phase: 'inhale', guideKey: 'vacuum_inhale', seconds: 10,  cue: 'Final inhale prep — exhale every drop of air out.' },
+      { id: 12, title: 'Standing Stomach Vacuum • Hold (4/4)',       phase: 'hold',   guideKey: 'vacuum_hold',   seconds: 20,  cue: 'Final vacuum hold — maximum transverse abdominis contraction!' },
+      { id: 13, title: 'Recovery Breath • Vacuum (4/4)',            phase: 'rest',   guideKey: 'vacuum_rest',   seconds: 15,  cue: 'Release and breathe comfortably before moving to the mat.' },
+      // Floor Mat Setup
+      { id: 14, title: 'Transition & Floor Mat Setup',              phase: 'rest',   guideKey: 'rest',          seconds: 20,  cue: 'Lie flat on your mat, press lower back firmly into floor, knees bent at 90°.' },
+      // Dead Bugs (2 sets)
+      { id: 15, title: 'Dead Bugs • Set 1/2 (Lumbar-Flat Lock)',     phase: 'work',   guideKey: 'dead_bug',      seconds: 40,  cue: 'Extend opposite arm & heel slowly while keeping lower back glued to the mat.' },
+      { id: 16, title: 'Rest & Reset • Dead Bugs (1/2)',            phase: 'rest',   guideKey: 'rest',          seconds: 20,  cue: 'Hug knees gently to chest, breathe deeply, prepare for Set 2.' },
+      { id: 17, title: 'Dead Bugs • Set 2/2 (Lumbar-Flat Lock)',     phase: 'work',   guideKey: 'dead_bug',      seconds: 40,  cue: 'Controlled alternating reach — zero neck pull and zero joint impact.' },
+      { id: 18, title: 'Rest & Flip to Forearms',                   phase: 'rest',   guideKey: 'rest',          seconds: 20,  cue: 'Roll smoothly onto forearms & toes (or knees) for Posterior Pelvic Tilt Plank.' },
+      // Forearm Plank (2 sets)
+      { id: 19, title: 'Forearm Plank + Pelvic Tilt • Set 1/2',     phase: 'work',   guideKey: 'plank',         seconds: 35,  cue: 'Tuck tailbone under, squeeze glutes, and pull ribs down toward hips!' },
+      { id: 20, title: 'Rest & Reset Elbows • Plank (1/2)',         phase: 'rest',   guideKey: 'rest',          seconds: 20,  cue: 'Drop knees softly, catch your breath, align elbows under shoulders.' },
+      { id: 21, title: 'Forearm Plank + Pelvic Tilt • Set 2/2',     phase: 'work',   guideKey: 'plank',         seconds: 35,  cue: 'Rigid core brace — pull elbows toward toes isometrically!' },
+      { id: 22, title: 'Rest & Roll onto Back for Bridges',         phase: 'rest',   guideKey: 'rest',          seconds: 20,  cue: 'Lie flat on back with knees bent and feet hip-width apart for Glute Bridges.' },
+      // Glute Bridges (2 sets)
+      { id: 23, title: 'Glute Bridges • Set 1/2 (Core Brace)',      phase: 'work',   guideKey: 'bridge',        seconds: 40,  cue: 'Drive through heels, squeeze glutes & brace abs at top for 2 seconds.' },
+      { id: 24, title: 'Rest & Reset • Glute Bridges (1/2)',        phase: 'rest',   guideKey: 'rest',          seconds: 20,  cue: 'Lower hips slowly, take two deep breaths before Set 2.' },
+      { id: 25, title: 'Glute Bridges • Set 2/2 (Core Brace)',      phase: 'work',   guideKey: 'bridge',        seconds: 40,  cue: 'Strong heel drive and pelvic lock — protects knees and aligns lower back.' },
+      // Stand Up & 5-Min Walk Finish
+      { id: 26, title: 'Stand Up & Transition',                     phase: 'rest',   guideKey: 'rest',          seconds: 15,  cue: 'Stand up unhurriedly and get ready for the 5-minute brisk indoor walk.' },
+      { id: 27, title: 'Brisk Zero-Impact Indoor Walk Finish',      phase: 'walk',   guideKey: 'walk',          seconds: 300, cue: 'Walk briskly heel-to-toe with strong arm swing & 20% core brace — zero jumping!' }
+    ];
+
+    // =========================================================================
+    // 2. WEEKLY LOW-IMPACT & CORE YOUTUBE PROGRESSION (WEEKS 1–4)
+    // =========================================================================
+    const WEEKLY_PLANS = [
+      {
+        week: 1,
+        label: 'Week 1',
+        subtitle: 'Foundation Walk & Vacuums',
+        tracks: {
+          standard: [
+            { title: '🚶 15-Min Low-Impact Indoor Walk', videoId: 'cvEJ5WFHJgw', query: '15-Min Happy Indoor Walk (Zero Jumping)' },
+            { title: '🧘 15-Min Standing Core Tightening', videoId: '50kH47ZztHs', query: '15-Min Standing Abs & Waist Sculpt' }
+          ],
+          care: [
+            { title: '🛡️ Ultra-Gentle Knee-Safe Walk', videoId: 'enYITYwvPAQ', query: 'Gentle Knee-Friendly Indoor Walk' },
+            { title: '🧘 Deep Core Vacuums & Breathing', videoId: '95846CBGU0M', query: 'Stomach Vacuum Deep Core Guide' }
+          ]
+        }
+      },
+      {
+        week: 2,
+        label: 'Week 2',
+        subtitle: 'Brisk March & Oblique Holds',
+        tracks: {
+          standard: [
+            { title: '🚶 20-Min Brisk Indoor Walk', videoId: '3sEeVJEXTfY', query: '20-Min Low-Impact Brisk Home Walk' },
+            { title: '💪 Standing Waist & Core Sculpt', videoId: '2pLT-olgUJs', query: 'Standing Waist & Core Tightening' }
+          ],
+          care: [
+            { title: '🛡️ Joint-Safe Rhythm Walk', videoId: 'cvEJ5WFHJgw', query: 'Zero-Squat Knee-Protective Walk' },
+            { title: '🧘 Pelvic Tilt & Lower Belly Core', videoId: 'g_BYB0R-4Ws', query: 'Dead Bug & Pelvic Tilt Core Control' }
+          ]
+        }
+      },
+      {
+        week: 3,
+        label: 'Week 3',
+        subtitle: '20-Min Cardio Walk & Dead Bugs',
+        tracks: {
+          standard: [
+            { title: '🚶 20-Min Low-Impact Cardio Walk', videoId: 'enYITYwvPAQ', query: '20-Min Indoor Fat-Burn Walk (No Jumping)' },
+            { title: '🎯 Lower Belly Dead-Bug & Core', videoId: 'g_BYB0R-4Ws', query: 'Lower Belly Dead-Bug & TVA Stability' }
+          ],
+          care: [
+            { title: '🛡️ Zero-Squat 20-Min Knee-Safe Walk', videoId: '3sEeVJEXTfY', query: '20-Min Bad-Knee Safe Indoor Walk' },
+            { title: '🧘 Glute Bridge & Core Reset', videoId: 'OUgsJ8-Vi0E', query: 'Pelvic Alignment Glute Bridge Routine' }
+          ]
+        }
+      },
+      {
+        week: 4,
+        label: 'Week 4',
+        subtitle: 'Interval Walk & Plank Superset',
+        tracks: {
+          standard: [
+            { title: '⚡ 20-Min Interval Indoor Walk', videoId: '3sEeVJEXTfY', query: '20-Min Brisk Interval Indoor Walk' },
+            { title: '🏆 Flat Tummy Vacuum & Plank', videoId: 'pSHjTRCQxIw', query: 'Plank & Stomach Vacuum Core Finisher' }
+          ],
+          care: [
+            { title: '🛡️ 20-Min Joint-Protective Walk', videoId: 'cvEJ5WFHJgw', query: 'Low-Impact Knee-Safe Walk Finisher' },
+            { title: '🧘 Deep Vacuum & Core Posture', videoId: '95846CBGU0M', query: 'Standing Stomach Vacuum & Core Posture' }
+          ]
+        }
+      }
+    ];
+
+    // =========================================================================
+    // 3. PERSISTENT STATE (UPDATED THROUGH DAY 63 CHECKPOINTS)
+    // =========================================================================
+    const STORAGE_KEY = 'tizenfit_tv_state_v4';
+
+    const DEFAULT_STATE = {
+      activeWeek: 1,
+      unlockedWeek: 1,
+      selectedTrackIdx: 0,
+      careMode: false,
+      audioEnabled: true,
+      showFormVideo: false,
+      weekSessions: { 1: 0, 2: 0, 3: 0, 4: 0 },
+      weekFeedback: { 1: null, 2: null, 3: null, 4: null },
+      startWeight: 77.0,
+      currentWeight: 70.00,
+      fatOnlyBaseline: 68.57,
+      targetWeight: 67.0,
+      startTummy: 41.5,
+      currentTummy: 38.0,
+      targetTummy: 35.5,
+      startWaist: 37.5,
+      currentWaist: 35.0,
+      targetWaist: 33.0,
+      chestInches: 36.0,
+      targetDate: '2026-12-31',
+      trajectoryHistory: [
+        { label: 'Day 1',  weight: 77.00, tummy: 41.5, waist: 37.5 },
+        { label: 'Day 27', weight: 73.40, tummy: 40.8, waist: 36.8 },
+        { label: 'Day 54', weight: 69.88, tummy: 40.0, waist: 36.0 },
+        { label: 'Day 63', weight: 70.00, tummy: 38.0, waist: 35.0 }
+      ],
+      firebaseConfig: {
+        enabled: false,
+        dbUrl: '',
+        syncPin: 'vishal-tizenfit',
+        lastSyncedAt: null
+      },
+      updatedAt: Date.now()
+    };
+
+    let state = loadLocalState();
+
+    function loadLocalState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+        const parsed = JSON.parse(raw);
+        return {
+          ...DEFAULT_STATE,
+          ...parsed,
+          weekSessions: { ...DEFAULT_STATE.weekSessions, ...(parsed.weekSessions || {}) },
+          weekFeedback: { ...DEFAULT_STATE.weekFeedback, ...(parsed.weekFeedback || {}) },
+          firebaseConfig: { ...DEFAULT_STATE.firebaseConfig, ...(parsed.firebaseConfig || {}) },
+          trajectoryHistory: Array.isArray(parsed.trajectoryHistory) && parsed.trajectoryHistory.length
+            ? parsed.trajectoryHistory
+            : DEFAULT_STATE.trajectoryHistory
+        };
+      } catch (err) {
+        console.error('Error loading local state:', err);
+        return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      }
+    }
+
+    function saveState(triggerCloudPush = true) {
+      state.updatedAt = Date.now();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (err) {
+        console.error('Error saving local state:', err);
+      }
+      if (triggerCloudPush && state.firebaseConfig && state.firebaseConfig.enabled && state.firebaseConfig.dbUrl) {
+        pushToFirebase(true);
+      }
+    }
+
+    // =========================================================================
+    // 4. DASHBOARD KPI, STREAK & WEEKLY YOUTUBE PLAYER RENDERERS
+    // =========================================================================
+    let lastMainVideoId = null;
+
+    function renderSyncStatusPill() {
+      const pill = document.getElementById('syncStatusPill');
+      const modalBadge = document.getElementById('modalCloudBadge');
+      if (state.firebaseConfig && state.firebaseConfig.enabled && state.firebaseConfig.dbUrl) {
+        const timeStr = state.firebaseConfig.lastSyncedAt
+          ? new Date(state.firebaseConfig.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Connected';
+        pill.textContent = `☁️ Cloud Synced (${timeStr})`;
+        pill.className = 'rounded-full border border-emerald-400/50 bg-emerald-500/15 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-300';
+        if (modalBadge) {
+          modalBadge.textContent = `Connected • PIN: ${state.firebaseConfig.syncPin}`;
+          modalBadge.className = 'rounded-full bg-emerald-500/20 px-3 py-0.5 text-xs font-extrabold text-emerald-300';
+        }
+      } else {
+        pill.textContent = '💾 Local Storage Ready';
+        pill.className = 'rounded-full border border-slate-700 bg-slate-900 px-2.5 py-0.5 text-[11px] font-bold text-slate-300';
+        if (modalBadge) {
+          modalBadge.textContent = 'Disconnected (Local Only)';
+          modalBadge.className = 'rounded-full bg-slate-800 px-3 py-0.5 text-xs font-bold text-slate-300';
+        }
+      }
+    }
+
+    function renderDashboard() {
+      const wCur = Number(state.currentWeight);
+      const fatBase = Number(state.fatOnlyBaseline || 68.57);
+      const effectiveFat = Math.min(wCur, fatBase);
+      const wRem = Math.max(0, effectiveFat - state.targetWeight);
+      const wPct = Math.min(100, Math.max(5, Math.round(((state.startWeight - effectiveFat) / (state.startWeight - state.targetWeight)) * 100)));
+
+      document.getElementById('kpiWeightCurrent').textContent = wCur.toFixed(2);
+      document.getElementById('kpiFatBaseline').textContent = `${effectiveFat.toFixed(2)} kg`;
+      document.getElementById('kpiWeightRem').textContent = wRem > 0 ? `${wRem.toFixed(2)} kg fat left` : 'Goal Reached! 🎉';
+      document.getElementById('kpiWeightBar').style.width = `${wPct}%`;
+
+      const tCur = Number(state.currentTummy);
+      const tRem = Math.max(0, tCur - state.targetTummy);
+      const tPct = Math.min(100, Math.max(5, Math.round(((state.startTummy - tCur) / (state.startTummy - state.targetTummy)) * 100)));
+      document.getElementById('kpiTummyCurrent').textContent = tCur.toFixed(1);
+      document.getElementById('kpiTummyRem').textContent = tRem > 0 ? `${tRem.toFixed(1)}" to go` : 'Flat Tummy Hit! 🎉';
+      document.getElementById('kpiTummyBar').style.width = `${tPct}%`;
+
+      const waCur = Number(state.currentWaist);
+      const waRem = Math.max(0, waCur - state.targetWaist);
+      const waPct = Math.min(100, Math.max(5, Math.round(((state.startWaist - waCur) / (state.startWaist - state.targetWaist)) * 100)));
+      document.getElementById('kpiWaistCurrent').textContent = waCur.toFixed(1);
+      document.getElementById('kpiWaistRem').textContent = waRem > 0 ? `${waRem.toFixed(1)}" to go` : 'Target Hit! 🎉';
+      document.getElementById('kpiWaistBar').style.width = `${waPct}%`;
+
+      const totalSessions = Object.values(state.weekSessions).reduce((acc, n) => acc + (Number(n) || 0), 0);
+      document.getElementById('kpiTotalWorkouts').textContent = String(totalSessions);
+      document.getElementById('kpiActiveWeekLabel').textContent = `Week ${state.activeWeek}`;
+
+      renderSyncStatusPill();
+
+      // Streak Pills
+      const wk = state.activeWeek;
+      const doneCount = state.weekSessions[wk] || 0;
+      document.getElementById('routineWeekNum').textContent = String(wk);
+      document.getElementById('routineWeekCountText').textContent = `${doneCount} / 5 Done`;
+
+      const pillsContainer = document.getElementById('weekStreakPills');
+      pillsContainer.innerHTML = '';
+      for (let d = 1; d <= 5; d++) {
+        const completed = d <= doneCount;
+        const div = document.createElement('div');
+        div.className = `flex flex-col items-center justify-center rounded-xl border py-2 text-xs font-extrabold ${
+          completed
+            ? 'border-emerald-400 bg-emerald-500/20 text-emerald-300'
+            : 'border-slate-800 bg-slate-900/70 text-slate-500'
+        }`;
+        div.innerHTML = `<span>Day ${d}</span><span class="mt-0.5 text-sm">${completed ? '✅' : '○'}</span>`;
+        pillsContainer.appendChild(div);
+      }
+
+      // Week Tabs
+      const tabsGrid = document.getElementById('weekTabsGrid');
+      tabsGrid.innerHTML = '';
+      WEEKLY_PLANS.forEach((plan) => {
+        const isActive = plan.week === wk;
+        const isUnlocked = plan.week <= state.unlockedWeek;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `tv-focusable flex flex-col items-start rounded-2xl border-2 p-3 text-left ${
+          isActive
+            ? 'border-sky-400 bg-sky-500/20 text-white shadow-lg'
+            : isUnlocked
+            ? 'border-slate-700 bg-[#080d19] text-slate-200 hover:border-slate-500'
+            : 'border-slate-800 bg-[#080d19]/50 text-slate-400 hover:border-slate-600'
+        }`;
+        btn.innerHTML = `
+          <div class="flex w-full items-center justify-between text-xs font-extrabold">
+            <span>${plan.label}</span>
+            <span>${isActive ? '● ACTIVE' : isUnlocked ? '✓' : '🔓'}</span>
+          </div>
+          <span class="mt-1 line-clamp-1 text-[11px] font-semibold text-slate-300">${plan.subtitle}</span>
+        `;
+        btn.addEventListener('click', () => {
+          state.activeWeek = plan.week;
+          state.unlockedWeek = Math.max(state.unlockedWeek, plan.week);
+          state.selectedTrackIdx = 0;
+          saveState();
+          renderDashboard();
+        });
+        tabsGrid.appendChild(btn);
+      });
+
+      // Video Track Selector & Direct Watch Link
+      const activePlan = WEEKLY_PLANS.find((p) => p.week === wk) || WEEKLY_PLANS[0];
+      const modeKey = state.careMode ? 'care' : 'standard';
+      const tracks = activePlan.tracks[modeKey] || activePlan.tracks.standard;
+      const safeTrackIdx = Math.min(state.selectedTrackIdx, tracks.length - 1);
+      const selectedTrack = tracks[safeTrackIdx];
+
+      document.getElementById('careModeTag').textContent = state.careMode
+        ? 'Pace: 🛡️ Recovery / Throat Care'
+        : 'Pace: Standard Zero-Impact';
+      document.getElementById('careModeTag').className = state.careMode
+        ? 'rounded-full bg-amber-500/20 px-3 py-1 text-xs font-bold text-amber-300'
+        : 'rounded-full bg-sky-500/15 px-3 py-1 text-xs font-bold text-sky-300';
+
+      const trackPillsEl = document.getElementById('videoTrackPills');
+      trackPillsEl.innerHTML = '';
+      tracks.forEach((tr, idx) => {
+        const active = idx === safeTrackIdx;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `tv-focusable rounded-xl border-2 px-3 py-2 text-xs font-extrabold ${
+          active
+            ? 'border-sky-400 bg-sky-500 text-slate-950'
+            : 'border-slate-700 bg-slate-900 text-slate-200 hover:bg-slate-800'
+        }`;
+        btn.textContent = tr.title;
+        btn.addEventListener('click', () => {
+          state.selectedTrackIdx = idx;
+          saveState(false);
+          renderDashboard();
+        });
+        trackPillsEl.appendChild(btn);
+      });
+
+      const watchUrl = `https://www.youtube.com/watch?v=${selectedTrack.videoId}`;
+      const embedUrl = `https://www.youtube-nocookie.com/embed/${selectedTrack.videoId}?rel=0&modestbranding=1&playsinline=1`;
+
+      document.getElementById('btnOpenYoutubeDirect').href = watchUrl;
+      document.getElementById('activeVideoDescription').textContent = `${activePlan.label} • ${selectedTrack.query}`;
+      document.getElementById('activeQueryDisplay').textContent = `Video ID: ${selectedTrack.videoId}`;
+
+      if (lastMainVideoId !== selectedTrack.videoId) {
+        lastMainVideoId = selectedTrack.videoId;
+        document.getElementById('youtubeIframe').src = embedUrl;
+      }
+
+      const fb = state.weekFeedback[wk];
+      const fbLabel = document.getElementById('feedbackStatusLabel');
+      if (fb === 'too_easy') fbLabel.textContent = 'Last Check-In: 🚀 Too Easy';
+      else if (fb === 'just_right') fbLabel.textContent = 'Last Check-In: 🎯 Just Right';
+      else if (fb === 'care_mode') fbLabel.textContent = 'Last Check-In: 🛡️ Care Mode';
+      else fbLabel.textContent = 'Ready for Check-In';
+    }
+
+    // =========================================================================
+    // 5. TIZEN-COMPATIBLE JS + SVG BIOMECHANICAL ANIMATION LOOP
+    // =========================================================================
+    let animStartTime = performance.now();
+
+    function runBiomechanicalSvgLoop(now) {
+      const elapsedSec = (now - animStartTime) / 1000;
+      const item = CIRCUIT_INTERVALS[circuitIdx] || CIRCUIT_INTERVALS[0];
+      const key = item.guideKey;
+      const speed = timerRunning ? 1.0 : 0.45;
+      const t = elapsedSec * speed;
+
+      if (key === 'march' || key === 'walk') {
+        const freq = key === 'walk' ? 6.2 : 4.0;
+        const swing = Math.sin(t * freq);
+        const legAngle = swing * (key === 'walk' ? 24 : 18);
+        const armAngle = -swing * (key === 'walk' ? 26 : 20);
+        const kneeLiftL = Math.max(0, swing) * -7;
+        const kneeLiftR = Math.max(0, -swing) * -7;
+
+        const legL = document.getElementById(key === 'walk' ? 'svgWalkLegL' : 'svgLegL');
+        const legR = document.getElementById(key === 'walk' ? 'svgWalkLegR' : 'svgLegR');
+        const armL = document.getElementById(key === 'walk' ? 'svgWalkArmL' : 'svgArmL');
+        const armR = document.getElementById(key === 'walk' ? 'svgWalkArmR' : 'svgArmR');
+
+        if (legL) legL.setAttribute('transform', `translate(0, ${kneeLiftL.toFixed(1)}) rotate(${legAngle.toFixed(1)} 96 104)`);
+        if (legR) legR.setAttribute('transform', `translate(0, ${kneeLiftR.toFixed(1)}) rotate(${(-legAngle).toFixed(1)} 96 104)`);
+        if (armL) armL.setAttribute('transform', `rotate(${armAngle.toFixed(1)} 96 64)`);
+        if (armR) armR.setAttribute('transform', `rotate(${(-armAngle).toFixed(1)} 96 64)`);
+      } else if (key === 'vacuum_inhale') {
+        const expand = (Math.sin(t * 2.5) + 1) / 2;
+        const belly = document.getElementById('svgInhaleBelly');
+        const ring = document.getElementById('svgInhaleRing');
+        if (belly) {
+          const ctrlX = 84 - expand * 12;
+          belly.setAttribute('d', `M 96 58 Q ${ctrlX.toFixed(1)} 92 96 126`);
+        }
+        if (ring) ring.setAttribute('r', (30 + expand * 12).toFixed(1));
+      } else if (key === 'vacuum_hold') {
+        const pulse = (Math.sin(t * 3.2) + 1) / 2;
+        const belly = document.getElementById('svgVacuumBelly');
+        const ring = document.getElementById('svgVacuumRing');
+        const arrows = document.getElementById('svgVacuumArrows');
+        if (belly) {
+          const ctrlX = 86 + pulse * 10;
+          belly.setAttribute('d', `M 96 58 Q ${ctrlX.toFixed(1)} 92 96 126`);
+        }
+        if (ring) {
+          ring.setAttribute('r', (36 + pulse * 10).toFixed(1));
+          ring.setAttribute('stroke-opacity', (0.45 + pulse * 0.55).toFixed(2));
+        }
+        if (arrows) arrows.setAttribute('transform', `translate(${(pulse * 6).toFixed(1)}, 0)`);
+      } else if (key === 'vacuum_rest') {
+        const breath = (Math.sin(t * 2.2) + 1) / 2;
+        const belly = document.getElementById('svgRestBelly');
+        const ring = document.getElementById('svgRestBreathRing');
+        if (belly) {
+          const ctrlX = 82 - breath * 10;
+          belly.setAttribute('d', `M 96 58 Q ${ctrlX.toFixed(1)} 92 96 126`);
+        }
+        if (ring) ring.setAttribute('r', (32 + breath * 12).toFixed(1));
+      } else if (key === 'dead_bug') {
+        const wave = Math.sin(t * 2.4);
+        const phaseA = Math.max(0, wave);
+        const phaseB = Math.max(0, -wave);
+        const armA = document.getElementById('svgDeadBugArmA');
+        const armB = document.getElementById('svgDeadBugArmB');
+        const legA = document.getElementById('svgDeadBugLegA');
+        const legB = document.getElementById('svgDeadBugLegB');
+        if (armA) armA.setAttribute('transform', `rotate(${(phaseA * 72).toFixed(1)} 122 126)`);
+        if (legB) legB.setAttribute('transform', `rotate(${(-phaseA * 68).toFixed(1)} 76 128)`);
+        if (armB) armB.setAttribute('transform', `rotate(${(phaseB * 72).toFixed(1)} 118 126)`);
+        if (legA) legA.setAttribute('transform', `rotate(${(-phaseB * 68).toFixed(1)} 76 128)`);
+      } else if (key === 'plank') {
+        const brace = (Math.sin(t * 2.8) + 1) / 2;
+        const grp = document.getElementById('svgPlankGroup');
+        const glow = document.getElementById('svgPlankGlow');
+        if (grp) grp.setAttribute('transform', `translate(0, ${(-brace * 3.5).toFixed(1)})`);
+        if (glow) glow.setAttribute('fill-opacity', (0.25 + brace * 0.55).toFixed(2));
+      } else if (key === 'bridge') {
+        const lift = (Math.sin(t * 2.3) + 1) / 2;
+        const hipY = 128 - lift * 24;
+        const torso = document.getElementById('svgBridgeTorso');
+        const pelvis = document.getElementById('svgBridgePelvis');
+        const leg = document.getElementById('svgBridgeLeg');
+        if (torso) torso.setAttribute('y1', hipY.toFixed(1));
+        if (pelvis) pelvis.setAttribute('cy', hipY.toFixed(1));
+        if (leg) leg.setAttribute('points', `76,${hipY.toFixed(1)} 46,92 38,135`);
+      } else if (key === 'rest') {
+        const pulse = (Math.sin(t * 2.5) + 1) / 2;
+        const ring = document.getElementById('svgTransitionRing');
+        if (ring) ring.setAttribute('r', (34 + pulse * 10).toFixed(1));
+      }
+
+      requestAnimationFrame(runBiomechanicalSvgLoop);
+    }
+
+    // =========================================================================
+    // 6. CIRCUIT TIMER & LIVE VISUAL FORM COACH RENDERER
+    // =========================================================================
+    let circuitIdx = 0;
+    let secondsRemaining = CIRCUIT_INTERVALS[0].seconds;
+    let timerRunning = false;
+    let timerHandle = null;
+    let lastRenderedGuideKey = null;
+    let lastFormVideoId = null;
+
+    function formatClock(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function computeTotalCircuitRemaining() {
+      let total = secondsRemaining;
+      for (let i = circuitIdx + 1; i < CIRCUIT_INTERVALS.length; i++) {
+        total += CIRCUIT_INTERVALS[i].seconds;
+      }
+      return total;
+    }
+
+    function renderVisualCoach(item) {
+      const guide = VISUAL_GUIDES[item.guideKey] || VISUAL_GUIDES.march;
+
+      document.getElementById('svgFigureTitle').textContent = guide.title;
+      document.getElementById('visualFocusBadge').textContent = guide.focusBadge;
+      document.getElementById('svgTargetMuscleTag').textContent = guide.muscleTag;
+
+      const motionLabel = document.getElementById('svgMotionState');
+      if (timerRunning) {
+        motionLabel.textContent = '● LIVE';
+        motionLabel.className = 'rounded bg-emerald-500/20 px-1.5 py-0.5 text-emerald-300 animate-pulse';
+      } else {
+        motionLabel.textContent = 'PREVIEW';
+        motionLabel.className = 'rounded bg-amber-500/15 px-1.5 py-0.5 text-amber-300';
+      }
+
+      if (lastRenderedGuideKey !== item.guideKey) {
+        lastRenderedGuideKey = item.guideKey;
+        document.getElementById('liveBiomechSvgContainer').innerHTML = guide.renderSvg();
+      }
+
+      const elapsedRatio = 1 - secondsRemaining / Math.max(1, item.seconds);
+      const activeStepIdx = elapsedRatio < 0.34 ? 0 : elapsedRatio < 0.68 ? 1 : 2;
+
+      const checklistEl = document.getElementById('visualStepChecklist');
+      checklistEl.innerHTML = '';
+      guide.steps.forEach((stepText, idx) => {
+        const isCurrent = idx === activeStepIdx;
+        const isDone = idx < activeStepIdx && timerRunning;
+        const li = document.createElement('li');
+        li.className = `flex items-start gap-2 rounded-lg px-2 py-1 transition-colors ${
+          isCurrent
+            ? 'bg-sky-500/20 font-bold text-white border border-sky-400/50'
+            : isDone
+            ? 'text-emerald-300/80'
+            : 'text-slate-400'
+        }`;
+        li.innerHTML = `
+          <span class="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-black ${
+            isCurrent ? 'bg-sky-400 text-slate-950' : isDone ? 'bg-emerald-500/30 text-emerald-300' : 'bg-slate-800 text-slate-400'
+          }">${isDone ? '✓' : idx + 1}</span>
+          <span>${stepText}</span>
+        `;
+        checklistEl.appendChild(li);
+      });
+
+      const videoBox = document.getElementById('simultaneousFormVideoBox');
+      const toggleBtn = document.getElementById('btnToggleFormVideo');
+      toggleBtn.textContent = state.showFormVideo ? '🎬 Hide Form Video' : '🎬 Form Demo Video';
+
+      if (state.showFormVideo) {
+        videoBox.classList.remove('hidden');
+        document.getElementById('formVideoLabel').textContent = `Demo: ${guide.videoTitle}`;
+        document.getElementById('formVideoExternalLink').href = `https://www.youtube.com/watch?v=${guide.videoId}`;
+        if (lastFormVideoId !== guide.videoId) {
+          lastFormVideoId = guide.videoId;
+          document.getElementById('formDemoIframe').src = `https://www.youtube-nocookie.com/embed/${guide.videoId}?autoplay=1&mute=1&loop=1&playlist=${guide.videoId}&rel=0&playsinline=1`;
+        }
+      } else {
+        videoBox.classList.add('hidden');
+      }
+    }
+
+    function renderCircuitTimer() {
+      const item = CIRCUIT_INTERVALS[circuitIdx] || CIRCUIT_INTERVALS[0];
+      const nextItem = CIRCUIT_INTERVALS[circuitIdx + 1];
+
+      document.getElementById('circuitStepLabel').textContent = `Interval ${circuitIdx + 1} of ${CIRCUIT_INTERVALS.length}`;
+      document.getElementById('circuitTotalRemaining').textContent = `Total Left: ${formatClock(computeTotalCircuitRemaining())}`;
+      document.getElementById('circuitCountdown').textContent = formatClock(secondsRemaining);
+      document.getElementById('circuitCueText').textContent = item.cue;
+
+      const pill = document.getElementById('circuitPhasePill');
+      const card = document.getElementById('circuitDisplayCard');
+
+      if (item.phase === 'warmup') {
+        pill.textContent = `WARM-UP • ${item.title.toUpperCase()}`;
+        pill.className = 'inline-block rounded-full bg-sky-500/20 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-sky-300';
+        card.classList.remove('interval-active-glow');
+      } else if (item.phase === 'inhale') {
+        pill.textContent = `INHALE PREP • ${item.title.toUpperCase()}`;
+        pill.className = 'inline-block rounded-full bg-cyan-500/20 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-cyan-300';
+        card.classList.remove('interval-active-glow');
+      } else if (item.phase === 'hold') {
+        pill.textContent = `VACUUM HOLD • ${item.title.toUpperCase()}`;
+        pill.className = 'inline-block rounded-full bg-emerald-500/20 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-emerald-300';
+        card.classList.toggle('interval-active-glow', timerRunning);
+      } else if (item.phase === 'work') {
+        pill.textContent = `CORE SCULPT • ${item.title.toUpperCase()}`;
+        pill.className = 'inline-block rounded-full bg-sky-500/20 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-sky-300';
+        card.classList.toggle('interval-active-glow', timerRunning);
+      } else if (item.phase === 'walk') {
+        pill.textContent = `ZERO-IMPACT FINISH • ${item.title.toUpperCase()}`;
+        pill.className = 'inline-block rounded-full bg-indigo-500/25 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-indigo-300';
+        card.classList.remove('interval-active-glow');
+      } else {
+        pill.textContent = `REST / TRANSITION • ${item.title.toUpperCase()}`;
+        pill.className = 'inline-block rounded-full bg-amber-500/20 px-4 py-1 text-xs font-extrabold uppercase tracking-widest text-amber-300';
+        card.classList.remove('interval-active-glow');
+      }
+
+      const pct = Math.round(((circuitIdx + 1) / CIRCUIT_INTERVALS.length) * 100);
+      document.getElementById('circuitProgressBar').style.width = `${pct}%`;
+      document.getElementById('circuitNextPreview').textContent = nextItem
+        ? `Up Next: ${nextItem.title} (${formatClock(nextItem.seconds)})`
+        : 'Final Interval — Finish Strong!';
+
+      document.getElementById('btnCircuitStartPause').textContent = timerRunning ? '⏸ Pause' : '▶ Start';
+      document.getElementById('btnToggleChimes').textContent = state.audioEnabled ? '🔊 Chimes ON' : '🔇 Chimes OFF';
+
+      renderVisualCoach(item);
+
+      const listEl = document.getElementById('intervalListPreview');
+      listEl.innerHTML = '';
+      CIRCUIT_INTERVALS.forEach((step, idx) => {
+        const li = document.createElement('li');
+        const active = idx === circuitIdx;
+        li.className = `flex items-center justify-between rounded-lg px-2.5 py-1.5 ${
+          active ? 'bg-sky-500/20 font-bold text-white border border-sky-400/50' : 'bg-slate-900/60'
+        }`;
+        li.innerHTML = `<span>${idx + 1}. ${step.title}</span><span class="font-mono text-sky-300">${formatClock(step.seconds)}</span>`;
+        listEl.appendChild(li);
+      });
+    }
+
+    function triggerPhaseChime(phase) {
+      if (phase === 'inhale') playChime('inhale');
+      else if (phase === 'hold') playChime('hold');
+      else if (phase === 'rest') playChime('rest');
+      else playChime('work');
+    }
+
+    function advanceInterval() {
+      if (circuitIdx < CIRCUIT_INTERVALS.length - 1) {
+        circuitIdx += 1;
+        const next = CIRCUIT_INTERVALS[circuitIdx];
+        secondsRemaining = next.seconds;
+        triggerPhaseChime(next.phase);
+        renderCircuitTimer();
+      } else {
+        clearInterval(timerHandle);
+        timerRunning = false;
+        circuitIdx = 0;
+        secondsRemaining = CIRCUIT_INTERVALS[0].seconds;
+        playChime('complete');
+
+        const wk = state.activeWeek;
+        state.weekSessions[wk] = Math.min(7, (state.weekSessions[wk] || 0) + 1);
+        saveState();
+        renderDashboard();
+        renderCircuitTimer();
+        showToast('15-Min Circuit Complete! 🏆', `Session logged for Week ${wk} and synced!`, '🔥');
+      }
+    }
+
+    function onTimerTick() {
+      if (secondsRemaining > 1) {
+        secondsRemaining -= 1;
+        if (secondsRemaining <= 3) playChime('tick');
+        renderCircuitTimer();
+      } else {
+        advanceInterval();
+      }
+    }
+
+    document.getElementById('btnCircuitStartPause').addEventListener('click', () => {
+      if (timerRunning) {
+        clearInterval(timerHandle);
+        timerRunning = false;
+      } else {
+        const cur = CIRCUIT_INTERVALS[circuitIdx];
+        triggerPhaseChime(cur.phase);
+        timerRunning = true;
+        timerHandle = setInterval(onTimerTick, 1000);
+      }
+      renderCircuitTimer();
+    });
+
+    document.getElementById('btnCircuitNext').addEventListener('click', () => {
+      advanceInterval();
+    });
+
+    document.getElementById('btnCircuitReset').addEventListener('click', () => {
+      clearInterval(timerHandle);
+      timerRunning = false;
+      circuitIdx = 0;
+      secondsRemaining = CIRCUIT_INTERVALS[0].seconds;
+      renderCircuitTimer();
+    });
+
+    document.getElementById('btnToggleChimes').addEventListener('click', () => {
+      state.audioEnabled = !state.audioEnabled;
+      saveState(false);
+      renderCircuitTimer();
+      if (state.audioEnabled) playChime('work');
+    });
+
+    document.getElementById('btnToggleFormVideo').addEventListener('click', () => {
+      state.showFormVideo = !state.showFormVideo;
+      if (!state.showFormVideo) {
+        lastFormVideoId = null;
+        document.getElementById('formDemoIframe').src = '';
+      }
+      saveState(false);
+      renderCircuitTimer();
+      showToast(
+        state.showFormVideo ? 'Live Form Video Enabled 🎬' : 'Form Video Hidden',
+        state.showFormVideo
+          ? 'Verified YouTube form video now plays alongside each interval.'
+          : 'Biomechanical SVG coach remains active.',
+        '🎬'
+      );
+    });
+
+    document.getElementById('btnCompleteSession').addEventListener('click', () => {
+      const wk = state.activeWeek;
+      state.weekSessions[wk] = Math.min(7, (state.weekSessions[wk] || 0) + 1);
+      saveState();
+      renderDashboard();
+      playChime('complete');
+      showToast('Session Logged ✓', `Week ${wk}: ${state.weekSessions[wk]}/5 workouts completed.`, '💪');
+    });
+
+    document.getElementById('btnUndoSession').addEventListener('click', () => {
+      const wk = state.activeWeek;
+      if ((state.weekSessions[wk] || 0) > 0) {
+        state.weekSessions[wk] -= 1;
+        saveState();
+        renderDashboard();
+        showToast('Session Undone', `Week ${wk}: ${state.weekSessions[wk]}/5 workouts.`, '↩️');
+      }
+    });
+
+    document.querySelectorAll('[data-feedback]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const rating = btn.dataset.feedback;
+        const wk = state.activeWeek;
+        state.weekFeedback[wk] = rating;
+
+        if (rating === 'care_mode') {
+          state.careMode = true;
+          showToast('Recovery / Throat Care Enabled 🛡️', 'Switched to ultra-gentle low-strain routines.', '🛡️');
+        } else {
+          state.careMode = false;
+          if (wk < 4) {
+            state.unlockedWeek = Math.max(state.unlockedWeek, wk + 1);
+            state.activeWeek = wk + 1;
+            state.selectedTrackIdx = 0;
+            showToast(`Week ${wk + 1} Unlocked! 🚀`, 'Next week progression loaded & synced.', '🎉');
+          } else {
+            showToast('Week 4 Mastered! 🏆', 'Keep repeating Week 4 through Dec 31!', '🏆');
+          }
+        }
+        saveState();
+        renderDashboard();
+      });
+    });
+
+    // =========================================================================
+    // 7. MEASUREMENT LOGGER MODAL (D-PAD STEPPERS & DUAL-LINE SVG CHART)
+    // =========================================================================
+    const measureModal = document.getElementById('measureModal');
+    let draftWeight = state.currentWeight;
+    let draftTummy = state.currentTummy;
+    let draftWaist = state.currentWaist;
+
+    function updateStepperLabels() {
+      document.getElementById('valStepperWeight').textContent = `${draftWeight.toFixed(2)} kg`;
+      document.getElementById('valStepperTummy').textContent = `${draftTummy.toFixed(1)}"`;
+      document.getElementById('valStepperWaist').textContent = `${draftWaist.toFixed(1)}"`;
+    }
+
+    function renderDualTrajectorySvg() {
+      const svg = document.getElementById('dualTrajectorySvg');
+      const baseHistory = [...state.trajectoryHistory];
+      const last = baseHistory[baseHistory.length - 1];
+
+      if (!last || Math.abs(last.weight - draftWeight) > 0.02 || Math.abs(last.tummy - draftTummy) > 0.05) {
+        baseHistory.push({
+          label: 'New',
+          weight: draftWeight,
+          tummy: draftTummy,
+          waist: draftWaist
+        });
+      }
+
+      const W = 640;
+      const H = 165;
+      const padL = 44;
+      const padR = 44;
+      const padT = 24;
+      const padB = 28;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      const weights = baseHistory.map((d) => d.weight);
+      const tummies = baseHistory.map((d) => d.tummy);
+
+      const minW = Math.min(66.5, ...weights) - 0.5;
+      const maxW = Math.max(77.5, ...weights) + 0.5;
+      const minT = Math.min(35.0, ...tummies) - 0.5;
+      const maxT = Math.max(42.0, ...tummies) + 0.5;
+
+      const getX = (i) => (baseHistory.length === 1 ? W / 2 : padL + (i / (baseHistory.length - 1)) * plotW);
+      const getYW = (w) => padT + ((maxW - w) / (maxW - minW)) * plotH;
+      const getYT = (t) => padT + ((maxT - t) / (maxT - minT)) * plotH;
+
+      let wPoints = '';
+      let tPoints = '';
+      let nodesHtml = '';
+
+      baseHistory.forEach((pt, idx) => {
+        const cx = getX(idx);
+        const cyW = getYW(pt.weight);
+        const cyT = getYT(pt.tummy);
+        wPoints += `${cx},${cyW} `;
+        tPoints += `${cx},${cyT} `;
+
+        nodesHtml += `
+          <circle cx="${cx}" cy="${cyW}" r="4.5" fill="#34d399" stroke="#080d19" stroke-width="2" />
+          <text x="${cx}" y="${cyW - 8}" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="800">${pt.weight.toFixed(1)}kg</text>
+
+          <circle cx="${cx}" cy="${cyT}" r="4.5" fill="#38bdf8" stroke="#080d19" stroke-width="2" />
+          <text x="${cx}" y="${cyT + 16}" text-anchor="middle" fill="#7dd3fc" font-size="11" font-weight="800">${pt.tummy.toFixed(1)}"</text>
+
+          <text x="${cx}" y="${H - 6}" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="700">${pt.label}</text>
+        `;
+      });
+
+      const targetWeightY = getYW(state.targetWeight);
+
+      svg.innerHTML = `
+        <line x1="${padL}" y1="${targetWeightY}" x2="${W - padR}" y2="${targetWeightY}" stroke="#10b981" stroke-opacity="0.45" stroke-width="1.5" stroke-dasharray="5,5" />
+        <text x="${W - padR}" y="${targetWeightY - 4}" text-anchor="end" fill="#10b981" font-size="10" font-weight="700">67.0 kg Goal</text>
+        ${baseHistory.length > 1 ? `<polyline fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${wPoints.trim()}" />` : ''}
+        ${baseHistory.length > 1 ? `<polyline fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6,3" points="${tPoints.trim()}" />` : ''}
+        ${nodesHtml}
+      `;
+    }
+
+    document.getElementById('btnOpenMeasureModal').addEventListener('click', () => {
+      draftWeight = Number(state.currentWeight);
+      draftTummy = Number(state.currentTummy);
+      draftWaist = Number(state.currentWaist);
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+      measureModal.classList.remove('hidden');
+      measureModal.classList.add('flex');
+      document.getElementById('stepTummyMinus').focus();
+    });
+
+    document.getElementById('btnCloseMeasureModal').addEventListener('click', () => {
+      measureModal.classList.add('hidden');
+      measureModal.classList.remove('flex');
+      document.getElementById('btnOpenMeasureModal').focus();
+    });
+
+    document.getElementById('stepWeightMinus').addEventListener('click', () => {
+      draftWeight = Math.max(45, +(draftWeight - 0.1).toFixed(2));
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+    });
+    document.getElementById('stepWeightPlus').addEventListener('click', () => {
+      draftWeight = Math.min(140, +(draftWeight + 0.1).toFixed(2));
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+    });
+
+    document.getElementById('stepTummyMinus').addEventListener('click', () => {
+      draftTummy = Math.max(26, +(draftTummy - 0.25).toFixed(2));
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+    });
+    document.getElementById('stepTummyPlus').addEventListener('click', () => {
+      draftTummy = Math.min(60, +(draftTummy + 0.25).toFixed(2));
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+    });
+
+    document.getElementById('stepWaistMinus').addEventListener('click', () => {
+      draftWaist = Math.max(24, +(draftWaist - 0.25).toFixed(2));
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+    });
+    document.getElementById('stepWaistPlus').addEventListener('click', () => {
+      draftWaist = Math.min(55, +(draftWaist + 0.25).toFixed(2));
+      updateStepperLabels();
+      renderDualTrajectorySvg();
+    });
+
+    document.getElementById('btnSaveMeasurements').addEventListener('click', () => {
+      state.currentWeight = draftWeight;
+      state.currentTummy = draftTummy;
+      state.currentWaist = draftWaist;
+      if (draftWeight < state.fatOnlyBaseline) {
+        state.fatOnlyBaseline = draftWeight;
+      }
+
+      const dateTag = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+      state.trajectoryHistory.push({
+        label: dateTag,
+        weight: draftWeight,
+        tummy: draftTummy,
+        waist: draftWaist
+      });
+      if (state.trajectoryHistory.length > 12) {
+        state.trajectoryHistory = [state.trajectoryHistory[0], ...state.trajectoryHistory.slice(-11)];
+      }
+
+      saveState();
+      renderDashboard();
+      measureModal.classList.add('hidden');
+      measureModal.classList.remove('flex');
+      showToast(
+        'Measurements Saved 📏',
+        `${draftWeight.toFixed(2)} kg • Tummy ${draftTummy.toFixed(1)}" • Waist ${draftWaist.toFixed(1)}"`,
+        '✅'
+      );
+      document.getElementById('btnOpenMeasureModal').focus();
+    });
+
+    // =========================================================================
+    // 8. JSON EXPORT / IMPORT BACKUP & FIREBASE REALTIME DB REST SYNC
+    // =========================================================================
+    const syncModal = document.getElementById('syncModal');
+
+    function openSyncModal() {
+      document.getElementById('jsonPasteArea').value = JSON.stringify(state, null, 2);
+      document.getElementById('firebaseUrlInput').value = state.firebaseConfig.dbUrl || '';
+      document.getElementById('firebasePinInput').value = state.firebaseConfig.syncPin || 'vishal-tizenfit';
+      renderSyncStatusPill();
+      syncModal.classList.remove('hidden');
+      syncModal.classList.add('flex');
+      document.getElementById('btnExportJsonFile').focus();
+    }
+
+    function closeSyncModal() {
+      syncModal.classList.add('hidden');
+      syncModal.classList.remove('flex');
+      document.getElementById('btnOpenSyncModal').focus();
+    }
+
+    document.getElementById('btnOpenSyncModal').addEventListener('click', openSyncModal);
+    document.getElementById('btnCloseSyncModalTop').addEventListener('click', closeSyncModal);
+    document.getElementById('btnCloseSyncModalBottom').addEventListener('click', closeSyncModal);
+
+    // Download JSON Backup
+    document.getElementById('btnExportJsonFile').addEventListener('click', () => {
+      try {
+        const yyyyMmDd = new Date().toISOString().slice(0, 10);
+        const filename = `tizenfit-backup-${yyyyMmDd}.json`;
+        const jsonStr = JSON.stringify(state, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('Backup Downloaded ⬇️', `Saved ${filename}`, '📦');
+      } catch (err) {
+        showToast('Export Error', 'Could not trigger file download on this browser.', '⚠️');
+      }
+    });
+
+    // Copy JSON Text
+    document.getElementById('btnCopyJsonClipboard').addEventListener('click', () => {
+      const area = document.getElementById('jsonPasteArea');
+      area.value = JSON.stringify(state, null, 2);
+      area.select();
+      try {
+        document.execCommand('copy');
+        showToast('JSON Copied 📋', 'Backup text copied to clipboard.', '📋');
+      } catch (err) {
+        showToast('Select & Copy', 'Copy directly from the highlighted JSON box.', 'ℹ️');
+      }
+    });
+
+    function applyImportedStateObject(parsed) {
+      if (!parsed || typeof parsed !== 'object' || typeof parsed.currentWeight !== 'number') {
+        showToast('Invalid Backup', 'JSON does not match TizenFit TV format.', '⚠️');
+        return false;
+      }
+      const preservedCloud = state.firebaseConfig;
+      state = {
+        ...DEFAULT_STATE,
+        ...parsed,
+        weekSessions: { ...DEFAULT_STATE.weekSessions, ...(parsed.weekSessions || {}) },
+        weekFeedback: { ...DEFAULT_STATE.weekFeedback, ...(parsed.weekFeedback || {}) },
+        firebaseConfig: parsed.firebaseConfig && parsed.firebaseConfig.dbUrl ? parsed.firebaseConfig : preservedCloud
+      };
+      saveState();
+      renderDashboard();
+      renderCircuitTimer();
+      return true;
+    }
+
+    document.getElementById('jsonFileInput').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const parsed = JSON.parse(ev.target.result);
+          if (applyImportedStateObject(parsed)) {
+            document.getElementById('jsonPasteArea').value = JSON.stringify(state, null, 2);
+            showToast('Backup Restored! ✅', `Loaded ${file.name} successfully.`, '📂');
+          }
+        } catch (err) {
+          showToast('Invalid JSON File', 'Could not parse the selected file.', '⚠️');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    document.getElementById('btnApplyPastedJson').addEventListener('click', () => {
+      try {
+        const raw = document.getElementById('jsonPasteArea').value.trim();
+        const parsed = JSON.parse(raw);
+        if (applyImportedStateObject(parsed)) {
+          showToast('JSON Imported! ✅', 'All logs, streaks, and metrics restored.', '📥');
+        }
+      } catch (err) {
+        showToast('Invalid JSON Text', 'Please check the pasted JSON syntax.', '⚠️');
+      }
+    });
+
+    function buildFirebaseEndpoint(rawUrl, rawPin) {
+      const cleanUrl = (rawUrl || '').trim().replace(/\/+$/, '');
+      const cleanPin = (rawPin || 'vishal-tizenfit').trim().replace(/[^a-zA-Z0-9_-]/g, '') || 'vishal-tizenfit';
+      if (!cleanUrl || !cleanUrl.startsWith('https://')) return null;
+      return `${cleanUrl}/tizenfit/${cleanPin}.json`;
+    }
+
+    async function pushToFirebase(silent = false) {
+      const endpoint = buildFirebaseEndpoint(state.firebaseConfig.dbUrl, state.firebaseConfig.syncPin);
+      if (!endpoint) {
+        if (!silent) showToast('Invalid Firebase URL', 'Enter a valid https://...firebaseio.com URL.', '⚠️');
+        return;
+      }
+
+      try {
+        const payload = { ...state, updatedAt: Date.now() };
+        const res = await fetch(endpoint, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        state.firebaseConfig.enabled = true;
+        state.firebaseConfig.lastSyncedAt = Date.now();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        renderSyncStatusPill();
+
+        if (!silent) {
+          showToast('Cloud Synced! ☁️', `Saved to PIN "${state.firebaseConfig.syncPin}".`, '🚀');
+        }
+      } catch (err) {
+        console.error('Firebase push error:', err);
+        if (!silent) {
+          showToast('Cloud Sync Failed', 'Check Firebase DB URL & Realtime Database rules.', '⚠️');
+        }
+      }
+    }
+
+    async function pullFromFirebase(silent = false) {
+      const urlVal = document.getElementById('firebaseUrlInput').value || state.firebaseConfig.dbUrl;
+      const pinVal = document.getElementById('firebasePinInput').value || state.firebaseConfig.syncPin;
+      const endpoint = buildFirebaseEndpoint(urlVal, pinVal);
+
+      if (!endpoint) {
+        if (!silent) showToast('Invalid Firebase URL', 'Enter a valid https://...firebaseio.com URL first.', '⚠️');
+        return;
+      }
+
+      try {
+        const res = await fetch(endpoint, { method: 'GET' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const remoteData = await res.json();
+
+        state.firebaseConfig.enabled = true;
+        state.firebaseConfig.dbUrl = urlVal.trim().replace(/\/+$/, '');
+        state.firebaseConfig.syncPin = pinVal.trim() || 'vishal-tizenfit';
+        state.firebaseConfig.lastSyncedAt = Date.now();
+
+        if (remoteData && typeof remoteData === 'object' && typeof remoteData.currentWeight === 'number') {
+          state = {
+            ...DEFAULT_STATE,
+            ...remoteData,
+            weekSessions: { ...DEFAULT_STATE.weekSessions, ...(remoteData.weekSessions || {}) },
+            weekFeedback: { ...DEFAULT_STATE.weekFeedback, ...(remoteData.weekFeedback || {}) },
+            firebaseConfig: state.firebaseConfig
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          renderDashboard();
+          renderCircuitTimer();
+          document.getElementById('jsonPasteArea').value = JSON.stringify(state, null, 2);
+          if (!silent) showToast('Pulled from Cloud ⬇️', 'TV & Galaxy S25 progress is synchronized!', '☁️');
+        } else {
+          await pushToFirebase(silent);
+        }
+      } catch (err) {
+        console.error('Firebase pull error:', err);
+        if (!silent) {
+          showToast('Cloud Pull Failed', 'Verify your Firebase Realtime DB URL and rules.', '⚠️');
+        }
+      }
+    }
+
+    document.getElementById('btnFirebaseConnectPush').addEventListener('click', () => {
+      const urlVal = document.getElementById('firebaseUrlInput').value.trim().replace(/\/+$/, '');
+      const pinVal = document.getElementById('firebasePinInput').value.trim() || 'vishal-tizenfit';
+      if (!urlVal.startsWith('https://')) {
+        showToast('Invalid URL', 'Please enter your Firebase Realtime DB URL starting with https://', '⚠️');
+        return;
+      }
+      state.firebaseConfig.enabled = true;
+      state.firebaseConfig.dbUrl = urlVal;
+      state.firebaseConfig.syncPin = pinVal;
+      pushToFirebase(false);
+    });
+
+    document.getElementById('btnFirebasePull').addEventListener('click', () => {
+      pullFromFirebase(false);
+    });
+
+    document.getElementById('btnFirebaseDisconnect').addEventListener('click', () => {
+      state.firebaseConfig.enabled = false;
+      saveState(false);
+      renderSyncStatusPill();
+      showToast('Cloud Disconnected', 'App is running in Local Storage mode.', '🔌');
+    });
+
+    // =========================================================================
+    // 9. SAMSUNG TIZEN TV REMOTE SPATIAL D-PAD NAVIGATION ENGINE
+    // =========================================================================
+    function getActiveFocusables() {
+      const scope = !measureModal.classList.contains('hidden')
+        ? measureModal
+        : !syncModal.classList.contains('hidden')
+        ? syncModal
+        : document;
+
+      return Array.from(scope.querySelectorAll('.tv-focusable')).filter(
+        (el) => el.offsetParent !== null && !el.disabled
+      );
+    }
+
+    function navigateDpad(direction) {
+      const items = getActiveFocusables();
+      if (!items.length) return;
+
+      const current = document.activeElement;
+      if (!current || !items.includes(current)) {
+        items[0].focus();
+        return;
+      }
+
+      const curRect = current.getBoundingClientRect();
+      const cx = curRect.left + curRect.width / 2;
+      const cy = curRect.top + curRect.height / 2;
+
+      let bestEl = null;
+      let bestScore = Infinity;
+
+      items.forEach((el) => {
+        if (el === current) return;
+        const r = el.getBoundingClientRect();
+        const tx = r.left + r.width / 2;
+        const ty = r.top + r.height / 2;
+        const dx = tx - cx;
+        const dy = ty - cy;
+
+        let valid = false;
+        let primary = 0;
+        let orthogonal = 0;
+
+        if (direction === 'ArrowRight' && dx > 8) {
+          valid = true; primary = dx; orthogonal = Math.abs(dy);
+        } else if (direction === 'ArrowLeft' && dx < -8) {
+          valid = true; primary = Math.abs(dx); orthogonal = Math.abs(dy);
+        } else if (direction === 'ArrowDown' && dy > 8) {
+          valid = true; primary = dy; orthogonal = Math.abs(dx);
+        } else if (direction === 'ArrowUp' && dy < -8) {
+          valid = true; primary = Math.abs(dy); orthogonal = Math.abs(dx);
+        }
+
+        if (valid) {
+          const score = primary + orthogonal * 2.4;
+          if (score < bestScore) {
+            bestScore = score;
+            bestEl = el;
+          }
+        }
+      });
+
+      if (bestEl) {
+        bestEl.focus();
+        bestEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      const activeTag = document.activeElement ? document.activeElement.tagName : '';
+      const isTextField = activeTag === 'INPUT' || activeTag === 'TEXTAREA';
+
+      if (isTextField) {
+        if (e.key === 'Escape' || e.keyCode === 10009) {
+          e.preventDefault();
+          document.activeElement.blur();
+        }
+        return;
+      }
+
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        navigateDpad(e.key);
+      } else if (e.key === 'Enter') {
+        if (document.activeElement && document.activeElement.classList.contains('tv-focusable')) {
+          e.preventDefault();
+          document.activeElement.click();
+        }
+      } else if (e.key === 'Escape' || e.key === 'Backspace' || e.keyCode === 10009) {
+        // 10009 = Samsung Tizen TV Remote RETURN key
+        if (!measureModal.classList.contains('hidden')) {
+          e.preventDefault();
+          measureModal.classList.add('hidden');
+          measureModal.classList.remove('flex');
+          document.getElementById('btnOpenMeasureModal').focus();
+        } else if (!syncModal.classList.contains('hidden')) {
+          e.preventDefault();
+          closeSyncModal();
+        }
+      }
+    });
+
+    // =========================================================================
+    // 10. BOOTSTRAP ON LOAD
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', async () => {
+      renderDashboard();
+      renderCircuitTimer();
+      requestAnimationFrame(runBiomechanicalSvgLoop);
+
+      if (state.firebaseConfig && state.firebaseConfig.enabled && state.firebaseConfig.dbUrl) {
+        await pullFromFirebase(true);
+      }
+
+      setTimeout(() => {
+        const startBtn = document.getElementById('btnCircuitStartPause');
+        if (startBtn) startBtn.focus();
+      }, 150);
+    });
+  </script>
+</body>
+</html>
